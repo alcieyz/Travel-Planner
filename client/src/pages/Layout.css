@@ -1,0 +1,31 @@
+.navigation-menu-container {
+    background-color: #333;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1vh;
+    z-index: 1000;
+    
+    /* display: flex;
+    flex-direction: row;
+    height: 5vh;
+    margin: auto;
+    justify-content: center;
+    align-items: center; */
+}
+
+.link{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 2vh;
+    color:pink;
+    padding:5px;
+}
+
+.link:hover {
+    color:black;
+    padding: 1.4vh;
+    padding-left:0.6vh;
+    padding-right:0.6vh;
+    background-color: lavender
+}

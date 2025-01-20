@@ -1,0 +1,26 @@
+form {
+    text-align: center;
+}
+
+input {
+    background-color: white;
+    color:black;
+}
+
+label {
+    color:black;
+}
+
+.account-exists{
+    margin-top: 27px;
+    color: #797979;
+    font-size: 18px;
+}
+
+.account-exists span{
+    color: rgb(255, 109, 223);
+    cursor: pointer;
+}
+.account-exists span:hover{
+    color: rgb(255, 58, 212);
+}

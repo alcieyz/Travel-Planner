@@ -1,0 +1,131 @@
+
+:root {
+  /* height: 100vh; */
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  /* color:black;
+  background-color:pink; */
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align:center;
+}
+
+body {
+  margin: 0;
+  margin-top: 25px;
+  min-height: 100vh;
+  background: linear-gradient(pink, lavender);
+  display: flex;
+  place-items: center;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+  color: black;
+  text-align: center;
+
+}
+
+h2 {
+  color: black;
+}
+
+h3 {
+  color: black;
+  -webkit-text-stroke: powderblue;
+  -webkit-text-stroke-width: 0.5px;
+}
+
+h6 {
+  color:black;
+  text-align: center;
+}
+
+p {
+  color:black;
+}
+
+button {
+  border-radius: 1px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  color:black;
+  background-color: palegreen;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #a35d92;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* table, th, td {
+  color:peachpuff;
+  border: 1px solid;
+  border-collapse: collapse;
+  border-color:honeydew;
+  border-radius:10px;
+  border-style:dashed;
+  padding: 15px;
+} */
+/*
+tr:first-child {
+  background-color: rgb(34, 135, 148);
+}
+  */
+td:hover {
+  background-color: rgb(34, 135, 148);
+}
+
+/*
+tr:nth-child(even), td:nth-child(even) {
+  background-color: rgb(34, 135, 148);
+}
+  */
+
+form {
+  color:powderblue;
+  text-align: left;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* .lavu_lavu {
+  width:300px;
+  height:auto;
+  border-radius:10px;
+} */

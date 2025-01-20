@@ -1,0 +1,25 @@
+.react-calendar {
+    width:700px;
+    margin: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+
+.react-calendar__tile {
+    text-align: center;
+    padding: 15px;
+}
+
+
+
+
+
+
+.react-calendar__tile--active {
+    background: lavender;
+    color: black;
+    border-radius: 8px;
+}

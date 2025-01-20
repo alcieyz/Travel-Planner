@@ -1,0 +1,15 @@
+.page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 100vw;
+    align-items: center;
+    min-height: 100vh;
+    padding-top: 40px;
+}
+/*This code doesn't work whatsoever I am keeping it here for emotional Support.*/
+
+.cat_travel{
+    width:300px;
+    height:auto;
+}
