@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {useNavigate} from 'react-router-dom';
 import './SignUp.css';
 import user_icon from '../assets/TP_person_icon_small.png'
 import pw_icon from '../assets/TP_pw_icon_small.png'
@@ -8,6 +9,7 @@ const SignUp = () => {
     const [username, setUsername] = useState('');
     const [pw, setPw] = useState('');
     const [showPw, setShowPw] = useState(false);
+    const navigate = useNavigate(); //initialize navigate function
 
     //Function to handle form submission
     const handleSubmit = async (e) => {
@@ -42,8 +44,8 @@ const SignUp = () => {
             alert('Sign Up successful!');
 
             //If Sign Up successful, store user info in localStorage
-            localStorage.setItem('userName', data.user.username); //Store user's name in localStorage
-            console.log('User data:', data.user); //Log the user data (optional)
+            localStorage.setItem('username', data.user.username); //Store user's name in localStorage
+            navigate('/LogIn');
 
         } catch (err) {
             alert(err.message); //Show error message if there's issue with the request

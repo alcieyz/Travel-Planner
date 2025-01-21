@@ -17,6 +17,8 @@ import NoPage from "./pages/NoPage";
 
 function App() {
 
+  //localStorage.clear();
+
   const location = useLocation();
 
   useEffect(() => {
@@ -39,7 +41,7 @@ function App() {
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="MySchedule" element ={<MySchedule/>} />
-        <Route path="MyNotes" element ={<MyNotes/>} />
+        <Route path="MyNotes" element ={<ProtectedRoute><MyNotes/></ProtectedRoute>} />
         <Route path="LogIn" element ={<LogIn/>} />
         <Route path="SignUp" element ={<SignUp/>} />
 
@@ -65,6 +67,18 @@ export default function Root() {
 }
 
 //testing git change
+//testing more git changes
+
+/* Things to add:
+- password encryption
+- dont allow successful name/avatar change if being changed to what it already was
+- change username/password, delete account
+- when deleting something, confirmation
+- protect myschedule and mynotes route
+- about page
+- when note content has a super long word, it extends off the note
+- add note categories
+*/
 
 function stuff() {
   /*

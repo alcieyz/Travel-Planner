@@ -155,6 +155,68 @@ app.post('/Dashboard/Profile/Avatar', upload.single('avatar'), (req, res) => {
     });
 });
 
+//Get all notes for a specific user
+app.get('/MyNotes', (req, res) => {
+    const {username} = req.query;
+    const query = 'SELECT * FROM notes WHERE username = ?';
+
+    db.query(query, [username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error fetching notes');
+        }
+        res.status(200).json({notes: results});
+    });
+});
+
+//Add a new note
+app.post('/MyNotes', (req, res) => {
+    const {title, content, username} = req.body;
+
+    const query = 'INSERT INTO notes (title, content, username) VALUES (?, ?, ?)';
+
+    db.query(query, [title, content, username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error adding note');
+        }
+
+        res.status(201).json({message: 'Note added successfully!'});
+    });
+});
+
+//Update existing note
+app.put('/MyNotes', (req, res) => {
+    const {id, title, content, username} = req.body;
+
+    const query = 'UPDATE notes SET title = ?, content = ? WHERE id = ? AND username = ?';
+
+    db.query(query, [title, content, id, username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error updating note');
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).send('Note not found');
+        }
+        res.status(200).json({message: 'Note updated successfully!'});
+    });
+});
+
+//Delete a note
+app.delete('/MyNotes/:id', (req, res) => {
+    const noteId = req.params.id; //or const {id} = req.params;, and change wuery to [id]
+
+    const query = 'DELETE FROM notes WHERE id = ?';
+
+    db.query(query, [noteId], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error deleting note');
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).send('Note not found');
+        }
+        res.status(200).json({message: 'Note deleted successfully'});
+    });
+});
+
 //Start the server on port 5000
 app.listen(5000, () => {
     console.log('Server running at http://localhost:5000'); //Log success message when server is up

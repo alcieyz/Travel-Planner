@@ -1,19 +1,33 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import './MyNotes.css';
+import {useAuth} from "../AuthContext";
 
-const MyNotes = () => {
-    const [notes, setNotes] = useState([
-        {
-            id: 1,
-            title: "note title 1",
-            content: "content 1",
-        },
-    ]);
-
+const MyNotes = () => { 
+    const { username, isLoggedIn } = useAuth();
+    const [notes, setNotes] = useState([]);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-
     const [selectedNote, setSelectedNote] = useState(null);
+
+    useEffect(() => {
+        if (isLoggedIn && username) {
+            fetchNotes();
+        }
+    }, [isLoggedIn, username]);
+
+    const fetchNotes = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/MyNotes?username=${username}`);
+            if (!response.ok) {
+                throw new Error("Failed to fetch notes");
+            }
+            const data = await response.json();
+            setNotes(data.notes);
+        }
+        catch (error) {
+            console.error("Error fetching notes:", error.message);
+        }
+    };
 
     const handleNoteClick = (note) => {
         setSelectedNote(note);
@@ -21,39 +35,74 @@ const MyNotes = () => {
         setContent(note.content);
     }
 
-    const handleAddNote = (event) => {
+    const handleAddNote = async (event) => {
         event.preventDefault();
 
-        const newNote = {
-            id: notes.length + 1,
-            title: title,
-            content: content,
-        };
-
-        setNotes([newNote, ...notes]);
-        setTitle("");
-        setContent("");
+        try {
+            const newNote = { title, content, username };
+            const response = await fetch("http://localhost:5000/MyNotes", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(newNote),
+            });
+            if (!response.ok) {
+                throw new Error("Failed to add note");
+            }
+            fetchNotes(); //Refresh notes
+            setTitle("");
+            setContent("");
+        }
+        catch (error) {
+            console.error("Error adding note:", error.message);
+        }
     };
 
-    const handleUpdateNote = (event) => {
+    const handleUpdateNote = async (event) => {
         event.preventDefault();
 
         if(!selectedNote) {
             return;
         }
 
-        const updatedNote = {
-            id: selectedNote.id,
-            title: title,
-            content: content,
+        try {
+            const updatedNote = {id: selectedNote.id, title, content, username };
+            const response = await fetch("http://localhost:5000/MyNotes", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json"},
+                body: JSON.stringify(updatedNote),
+            });
+            if (!response.ok) {
+                throw new Error("Failed to update note");
+            }
+            fetchNotes();
+            setTitle("");
+            setContent("");
+            setSelectedNote(null);
         }
+        catch (error) {
+            console.error("Error updating note:", error.message);
+        }
+    };
 
-        const updatedNotesList = notes.map((note) => note.id === selectedNote.id ? updatedNote : note)
+    const deleteNote = async (event, noteId) => {
+        event.stopPropagation();
 
-        setNotes(updatedNotesList);
-        setTitle("");
-        setContent("");
-        setSelectedNote(null);
+        const confirmDelete = window.confirm("Are you sure you want to delete this note?");
+        if (!confirmDelete) {
+            return;
+        }
+        try {
+            const response = await fetch(`http://localhost:5000/MyNotes/${noteId}`, {
+                method: "DELETE",
+            });
+            if (!response.ok) {
+                throw new Error("Failed to delete note");
+            }
+            fetchNotes();
+        }
+        catch (error) {
+            console.error("Error deleting note:", error.message);
+        }
     };
 
     const handleCancel = () => {
@@ -61,13 +110,6 @@ const MyNotes = () => {
         setContent("");
         setSelectedNote(null);
     }
-
-    const deleteNote = (event, noteId) => {
-        event.stopPropagation();
-
-        const updatedNotes = notes.filter((note) => note.id !== noteId);
-        setNotes(updatedNotes);
-    };
 
 
     return (
@@ -84,19 +126,18 @@ const MyNotes = () => {
                     </input>
                     <textarea 
                         value={content}
-                        onChange={(event) =>
-                            setContent(event.target.value)
-                        }
+                        onChange={(event) => setContent(event.target.value)}
                         placeholder="Content" rows={10} required>
                     </textarea>
 
-                        {selectedNote ? (<div className="edit-buttons">
+                    {selectedNote ? (
+                        <div className="edit-buttons">
                             <button type="submit">Save</button>
                             <button onClick={handleCancel}>Cancel</button>
                         </div>
-                        ) : (
-                            <button type="submit">Add Note</button>
-                        )}
+                    ) : (
+                        <button type="submit">Add Note</button>
+                    )}
                 </form>
                 <div className="notes-grid">
                     {notes.map((note)=> (
