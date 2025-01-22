@@ -71,13 +71,13 @@ export default function Root() {
 
 /* Things to add:
 - password encryption
-- dont allow successful name/avatar change if being changed to what it already was
-- change username/password, delete account
-- when deleting something, confirmation
-- protect myschedule and mynotes route
+- change username/password
+- protect myschedule route
 - about page
 - when note content has a super long word, it extends off the note
 - add note categories
+- fix centering window size cuz theres a horizontal scroll bar for some strange reason
+- routing nav bar padding stuff
 */
 
 function stuff() {

@@ -15,6 +15,11 @@ const Profile = () => {
             return;
         }
 
+        if (name === contextName) {
+            alert("Name already updated");
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:5000/Dashboard/Profile/Name', {
                 method: 'POST',
@@ -91,12 +96,12 @@ const Profile = () => {
                 </div>
             </form>
 
-            {(contextName !== null) ? <h3>Hi, {contextName}</h3> : ''}
+            {contextName && <h3>Hi, {contextName}</h3>}
             <form onSubmit={handleNameSubmit}>
                 <div className="inputs">
                     <div className="input">
-                        <input type="text" placeholder={(contextName !== null) ? contextName : "Name"} value={name} onChange={(e) => setName(e.target.value)}/>
-                        <button type="submit" className="submit">{(contextName !== null) ? "Change" : "Add"} Name</button>
+                        <input type="text" placeholder={(contextName) ? contextName : "Name"} value={name || ''} onChange={(e) => setName(e.target.value)}/>
+                        <button type="submit" className="submit">{(contextName) ? "Change" : "Add"} Name</button>
                     </div>
                 </div>
             </form>

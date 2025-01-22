@@ -98,6 +98,42 @@ app.post('/LogIn', (req, res) => {
     });
 });
 
+//Delete Account
+app.delete('/Dashboard/Settings/:username', (req, res) => {
+    const username = req.params.username;
+
+    const getOldAvatarQuery = 'SELECT avatar FROM users WHERE username = ?';
+
+    db.query(getOldAvatarQuery, [username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error fetching user data');
+        }
+
+        const oldAvatar = results[0]?.avatar;
+
+        if (oldAvatar && oldAvatar !== '/uploads/TP_person_icon.png') {
+            const fullOldAvatarPath = path.join(__dirname, '..', 'client', oldAvatar);
+            fs.unlink(fullOldAvatarPath, (unlinkErr) => {
+                if (unlinkErr) {
+                    console.error(`Error deleting old avatar: ${unlinkErr.message}`);
+                }
+            });
+        }
+    });
+
+    const query = 'DELETE FROM users WHERE username = ?';
+
+    db.query(query, [username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error deleting account');
+        }
+        if (results.affectedRows ===0) {
+            return res.status(404).send('Account not found');
+        }
+        res.status(200).json({message: 'Account deleted successfully'});
+    });
+});
+
 //Profile Name route
 app.post('/Dashboard/Profile/Name', (req, res) => {
     const {name, username} = req.body; 

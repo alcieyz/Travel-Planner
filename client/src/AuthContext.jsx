@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState } from 'react';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('username'));
+    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('username'));
     const [username, setUsername] = useState(localStorage.getItem('username') || '');
     const [contextName, setContextName] = useState(localStorage.getItem('name'));
     const [contextAvatar, setContextAvatar] = useState(localStorage.getItem('avatar') || '/uploads/TP_person_icon.png')

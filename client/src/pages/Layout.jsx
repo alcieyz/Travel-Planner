@@ -4,7 +4,7 @@ import './Layout.css';
 import user_icon from '../assets/TP_person_icon_small.png'
 
 const Layout = ({children}) => {
-    const {isLoggedIn, username} = useAuth();
+    const {isLoggedIn, username, contextAvatar} = useAuth();
 
     return (
         <>
@@ -16,7 +16,7 @@ const Layout = ({children}) => {
                     &emsp;
                     <Link className="link" title="My Notes" to="/MyNotes">My Notes</Link>
                     &emsp;
-                    <img src={user_icon} alt="User icon"/>
+                    <img src={contextAvatar} alt="User icon" className="avatar-icon"/>
                     {!isLoggedIn ? (
                         <Link className="link" title="Log In/Sign Up" to="/LogIn">Log In</Link>
                     ) : (

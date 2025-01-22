@@ -3,60 +3,39 @@ import {useAuth} from '../AuthContext';
 import './Settings.css';
 
 const Settings = () => {
-    /* const {contextName, updateName} = useAuth();
-    const [name, setName] = useState('');
-    
+    const {username, logOut} = useAuth();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleDeleteAccount = async (e, username) => {
+        e.stopPropagation();
 
-        if (!name) { 
-            alert("Please enter a name");
+        const confirmDeleteAccount = window.confirm("Are you sure you want to delete this account?");
+        if (!confirmDeleteAccount) {
             return;
         }
 
-        const username = localStorage.getItem('username');
-        const url = '/Dashboard/Profile';
-
         try {
-            const response = await fetch(`http://localhost:5000${url}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    name,
-                    username,
-                }),
+            const response = await fetch(`http://localhost:5000/Dashboard/Settings/${username}`, {
+                method: 'DELETE',
             });
-
             if (!response.ok) {
-                const message = await response.text();
-                throw new Error(message);
+                throw new Error("Failed to delete account");
             }
 
-            const data = await response.json();
-
-            //Successful
-            updateName(data.user.name);
-            alert('Name updated successfully!');
+            //Deletion successful
+            logOut();
+            alert('Account Deletion successful');
         }
-        catch (err) {
-            alert(err.message);
+        catch (error) {
+            console.error("Error deleting account:", error.message);
+            alert(error.message);
         }
-    } */
+    };
 
     return (
         <div>
             <h2>Settings</h2>
             <h3>Theme?</h3>
-            {/* <form onSubmit={handleSubmit}>
-                <div className="inputs">
-                    <div className="input">
-                        <input type="text" placeholder={(contextName !== null) ? contextName : "Name"} value={name} onChange={(e) => setName(e.target.value)}/>
-                        <button type="submit" className="submit">Change Name</button>
-                    </div>
-                </div>
-            </form>
-            {(contextName !== null) ? <h3>Hi, {contextName}</h3> : ''} */}
+            <button className="delete-acc-btn" onClick={(e) => handleDeleteAccount(e, username)}>Delete Account</button>
         </div>
     )
 }

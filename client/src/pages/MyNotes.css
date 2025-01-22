@@ -15,6 +15,11 @@ body {
     }
 }
 
+.select-dropdown {
+    color: black;
+    background-color: white;
+}
+
 .notes-grid {
     display: grid;
     grid-template-columns: repeat(

@@ -2,10 +2,14 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    width: 100vw;
+    width: 100vw; /* % ?? */
+    /* max-width: 100%; */
+    /* max-width: 1200px; Limits width for large screens */
     align-items: center;
     min-height: 100vh;
     padding-top: 40px;
+    /* margin: 0 auto; */
+    /* box-sizing: border-box; Includes padding in width/height calculation */
 }
 /*This code doesn't work whatsoever I am keeping it here for emotional Support.*/
 

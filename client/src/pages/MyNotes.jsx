@@ -5,6 +5,8 @@ import {useAuth} from "../AuthContext";
 const MyNotes = () => { 
     const { username, isLoggedIn } = useAuth();
     const [notes, setNotes] = useState([]);
+    const [notesByCategory, setNotesByCategory] = useState({});
+    const [category, setCategory] = useState("Uncategorized")
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [selectedNote, setSelectedNote] = useState(null);
@@ -22,7 +24,7 @@ const MyNotes = () => {
                 throw new Error("Failed to fetch notes");
             }
             const data = await response.json();
-            setNotes(data.notes);
+            setNotes(data);
         }
         catch (error) {
             console.error("Error fetching notes:", error.message);
@@ -81,14 +83,15 @@ const MyNotes = () => {
         }
         catch (error) {
             console.error("Error updating note:", error.message);
+            alert(error.message);
         }
     };
 
     const deleteNote = async (event, noteId) => {
         event.stopPropagation();
 
-        const confirmDelete = window.confirm("Are you sure you want to delete this note?");
-        if (!confirmDelete) {
+        const confirmDeleteNote = window.confirm("Are you sure you want to delete this note?");
+        if (!confirmDeleteNote) {
             return;
         }
         try {
@@ -99,9 +102,11 @@ const MyNotes = () => {
                 throw new Error("Failed to delete note");
             }
             fetchNotes();
+            alert('Note deleted successfully')
         }
         catch (error) {
             console.error("Error deleting note:", error.message);
+            alert(error.message);
         }
     };
 
@@ -130,6 +135,14 @@ const MyNotes = () => {
                         placeholder="Content" rows={10} required>
                     </textarea>
 
+                    <select className="select-dropdown" value={category} onChange={(event) => setCategory(event.target.value)}>
+                        <option value="Uncategorized">Uncategorized</option>
+                        <option value="Attractions">Attractions</option>
+                        <option value="Food">Food</option>
+                        <option value="Stay">Stay</option>
+                        <option value="Other">Other</option>
+                    </select>
+
                     {selectedNote ? (
                         <div className="edit-buttons">
                             <button type="submit">Save</button>
@@ -139,17 +152,22 @@ const MyNotes = () => {
                         <button type="submit">Add Note</button>
                     )}
                 </form>
-                <div className="notes-grid">
-                    {notes.map((note)=> (
-                        <div key={note.id} className="notes-item" onClick={() => handleNoteClick(note)}>
-                            <div className="notes-header">
-                                <button onClick={(event) => deleteNote(event, note.id)}>x</button>
+                {Object.keys(notesByCategory).map((cat) => (
+                    <div key={cat} className="notes-category">
+                        <h2>{cat}</h2>
+                        <div className="notes-grid">
+                        {notesByCategory[cat].map((note) => (
+                            <div key={note.id} className="notes-item" onClick={() => handleNoteClick(note)}>
+                                <div className="notes-header">
+                                    <button onClick={(event) => deleteNote(event, note.id)}>x</button>
+                                </div>
+                                <h2>{note.title}</h2>
+                                <p>{note.content}</p>
                             </div>
-                            <h2>{note.title}</h2>
-                            <p>{note.content}</p>
+                        ))}
                         </div>
-                    ))}
-                </div>
+                    </div>
+                ))}
             </div>
         </div>
     )
