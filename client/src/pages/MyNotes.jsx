@@ -4,7 +4,6 @@ import {useAuth} from "../AuthContext";
 
 const MyNotes = () => { 
     const { username, isLoggedIn } = useAuth();
-    const [notes, setNotes] = useState([]);
     const [notesByCategory, setNotesByCategory] = useState({});
     const [category, setCategory] = useState("Uncategorized")
     const [title, setTitle] = useState("");
@@ -24,7 +23,7 @@ const MyNotes = () => {
                 throw new Error("Failed to fetch notes");
             }
             const data = await response.json();
-            setNotes(data);
+            setNotesByCategory(data);
         }
         catch (error) {
             console.error("Error fetching notes:", error.message);
@@ -35,13 +34,14 @@ const MyNotes = () => {
         setSelectedNote(note);
         setTitle(note.title);
         setContent(note.content);
+        setCategory(note.category || "Uncategorized");
     }
 
     const handleAddNote = async (event) => {
         event.preventDefault();
 
         try {
-            const newNote = { title, content, username };
+            const newNote = { title, content, category, username };
             const response = await fetch("http://localhost:5000/MyNotes", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
@@ -51,8 +51,7 @@ const MyNotes = () => {
                 throw new Error("Failed to add note");
             }
             fetchNotes(); //Refresh notes
-            setTitle("");
-            setContent("");
+            resetForm();
         }
         catch (error) {
             console.error("Error adding note:", error.message);
@@ -67,7 +66,7 @@ const MyNotes = () => {
         }
 
         try {
-            const updatedNote = {id: selectedNote.id, title, content, username };
+            const updatedNote = {id: selectedNote.id, title, content, category, username };
             const response = await fetch("http://localhost:5000/MyNotes", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json"},
@@ -77,9 +76,7 @@ const MyNotes = () => {
                 throw new Error("Failed to update note");
             }
             fetchNotes();
-            setTitle("");
-            setContent("");
-            setSelectedNote(null);
+            resetForm();
         }
         catch (error) {
             console.error("Error updating note:", error.message);
@@ -110,9 +107,10 @@ const MyNotes = () => {
         }
     };
 
-    const handleCancel = () => {
+    const resetForm = () => {
         setTitle("");
         setContent("");
+        setCategory("Uncategorized");
         setSelectedNote(null);
     }
 
@@ -146,7 +144,7 @@ const MyNotes = () => {
                     {selectedNote ? (
                         <div className="edit-buttons">
                             <button type="submit">Save</button>
-                            <button onClick={handleCancel}>Cancel</button>
+                            <button type="button" onClick={resetForm}>Cancel</button>
                         </div>
                     ) : (
                         <button type="submit">Add Note</button>

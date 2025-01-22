@@ -20,6 +20,16 @@ body {
     background-color: white;
 }
 
+.notes-category {
+    margin-bottom: 20px;
+}
+
+.notes-category h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #333;
+}
+
 .notes-grid {
     display: grid;
     grid-template-columns: repeat(

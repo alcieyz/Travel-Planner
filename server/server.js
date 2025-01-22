@@ -194,38 +194,45 @@ app.post('/Dashboard/Profile/Avatar', upload.single('avatar'), (req, res) => {
 //Get all notes for a specific user
 app.get('/MyNotes', (req, res) => {
     const {username} = req.query;
-    const query = 'SELECT * FROM notes WHERE username = ?';
+    const query = `SELECT id, title, content, category FROM notes WHERE username = ? ORDER BY category ASC, id ASC`;
 
     db.query(query, [username], (err, results) => {
         if (err) {
             return res.status(500).send('Error fetching notes');
         }
-        res.status(200).json({notes: results});
+        const groupedNotes = results.reduce((acc, note) => {
+            if (!acc[note.category]) {
+                acc[note.category] = [];
+            }
+            acc[note.category].push(note);
+            return acc;
+        }, {});
+        res.json(groupedNotes);
     });
 });
 
 //Add a new note
 app.post('/MyNotes', (req, res) => {
-    const {title, content, username} = req.body;
+    const {title, content, username, category = 'Uncategorized'} = req.body;
 
-    const query = 'INSERT INTO notes (title, content, username) VALUES (?, ?, ?)';
+    const query = `INSERT INTO notes (title, content, username, category) VALUES (?, ?, ?, ?)`;
 
-    db.query(query, [title, content, username], (err, results) => {
+    db.query(query, [title, content, username, category], (err, results) => {
         if (err) {
             return res.status(500).send('Error adding note');
         }
 
-        res.status(201).json({message: 'Note added successfully!'});
+        res.status(201).json({id: results.insertId});
     });
 });
 
 //Update existing note
 app.put('/MyNotes', (req, res) => {
-    const {id, title, content, username} = req.body;
+    const {id, title, content, username, category} = req.body;
 
-    const query = 'UPDATE notes SET title = ?, content = ? WHERE id = ? AND username = ?';
+    const query = 'UPDATE notes SET title = ?, content = ?, category = ? WHERE id = ? AND username = ?';
 
-    db.query(query, [title, content, id, username], (err, results) => {
+    db.query(query, [title, content, category, id, username], (err, results) => {
         if (err) {
             return res.status(500).send('Error updating note');
         }
