@@ -6,6 +6,7 @@ import ProtectedRoute from './ProtectedRoute';
 import Layout from "./pages/Layout";
 import Home from "./pages/Home";
 import MySchedule from "./pages/MySchedule";
+import MyBudget from "./pages/MyBudget";
 import MyNotes from './pages/MyNotes';
 import LogIn from "./pages/LogIn";
 import SignUp from './pages/SignUp';
@@ -25,6 +26,7 @@ function App() {
     const pageTitles = {
       "/": "Home - Travel Planner",
       "/MySchedule": "My Schedule - Travel Planner",
+      "/MyBudget": "My Budget - Travel Planner",
       "/MyNotes": "My Notes - Travel Planner",
       "/LogIn": "Log In - Travel Planner",
       "/SignUp": "Sign Up - Travel Planner",
@@ -41,6 +43,7 @@ function App() {
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="MySchedule" element ={<MySchedule/>} />
+        <Route path="MyBudget" element ={<ProtectedRoute><MyBudget/></ProtectedRoute>} />
         <Route path="MyNotes" element ={<ProtectedRoute><MyNotes/></ProtectedRoute>} />
         <Route path="LogIn" element ={<LogIn/>} />
         <Route path="SignUp" element ={<SignUp/>} />
@@ -78,6 +81,9 @@ export default function Root() {
 - fix centering window size cuz theres a horizontal scroll bar for some strange reason
 - routing nav bar padding stuff
 - improve icons
+- budget calculator
+- when adding custom category, adds it into the select dropdown
+- budget stuff formatting, the decimal input
 */
 
 function stuff() {
