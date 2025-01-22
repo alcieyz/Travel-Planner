@@ -5,7 +5,8 @@ import {useAuth} from "../AuthContext";
 const MyNotes = () => { 
     const { username, isLoggedIn } = useAuth();
     const [notesByCategory, setNotesByCategory] = useState({});
-    const [category, setCategory] = useState("Uncategorized")
+    const [category, setCategory] = useState("Uncategorized");
+    const [customCategory, setCustomCategory] = useState("");
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [selectedNote, setSelectedNote] = useState(null);
@@ -139,7 +140,15 @@ const MyNotes = () => {
                         <option value="Food">Food</option>
                         <option value="Stay">Stay</option>
                         <option value="Other">Other</option>
+                        {customCategory && <option value={customCategory}>{customCategory}</option>}
                     </select>
+
+                    <input 
+                        type="text" 
+                        placeholder="Add custom category" 
+                        value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} 
+                        onBlur={() => customCategory && setCategory(customCategory)} //Automatically select custom category
+                    />
 
                     {selectedNote ? (
                         <div className="edit-buttons">
