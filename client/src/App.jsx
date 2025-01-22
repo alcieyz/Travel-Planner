@@ -75,9 +75,9 @@ export default function Root() {
 - protect myschedule route
 - about page
 - when note content has a super long word, it extends off the note
-- add note categories
 - fix centering window size cuz theres a horizontal scroll bar for some strange reason
 - routing nav bar padding stuff
+- improve icons
 */
 
 function stuff() {
