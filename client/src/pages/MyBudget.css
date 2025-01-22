@@ -2,35 +2,35 @@ body {
     margin: 20px;
 }
 
-.notes-container {
-    grid-template-columns: 1fr;
+.budget-container {
+    /* grid-template-columns: 1fr; */
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 @media (min-width: 600px) {
-    .notes-container {
+    .budget-container {
         display: block;
     }
 }
 
-.select-dropdown {
+/* .select-dropdown {
     color: black;
     background-color: white;
-}
+} */
 
-.notes-category {
+.entries-category {
     margin-bottom: 20px;
 }
 
-.notes-category h2 {
+.entries-category h2 {
     font-size: 1.5em;
     margin-bottom: 10px;
     color: #333;
 }
 
-.notes-grid {
+/* .entries-grid {
     display: grid;
     grid-template-columns: repeat(
         auto-fill,
@@ -39,9 +39,9 @@ body {
     grid-auto-rows: minmax(250px, auto);
     gap: 20px;
     width: 100%;
-}
+} */
 
-.note-item {
+.entry-item {
     display: flex;
     flex-direction: column;
     border: 1px solid #ccc;
@@ -53,12 +53,12 @@ body {
     cursor: pointer;
 }
 
-.note-header {
+.entry-header {
     display: flex;
     justify-content: flex-end;
 }
 
-.note-header button {
+.entry-header button {
     font-size: 16px;
     background: transparent;
     border: none;
@@ -77,13 +77,13 @@ textarea, input {
     font-size: 16px;
 }
 
-.notes-form {
+.budget-form {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.notes-form button {
+.budget-form button {
     border-radius: 5px;
     background-color: rgb(64, 154, 184);
     border: none;
@@ -92,12 +92,12 @@ textarea, input {
     color: black;
 }
 
-.notes-form button:hover {
+.budget-form button:hover {
     background-color: rgb(106, 175, 198);
     cursor: pointer;
 }
 
-.edit-buttons {
+/* .edit-buttons {
     display: flex;
     justify-content: space-evenly;
     gap: 5px;
@@ -110,4 +110,4 @@ textarea, input {
 .edit-buttons button:last-of-type {
     background-color: rgb(220, 89, 89);
     color: black;
-}
+} */

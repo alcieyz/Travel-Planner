@@ -245,7 +245,7 @@ app.put('/MyNotes', (req, res) => {
 
 //Delete a note
 app.delete('/MyNotes/:id', (req, res) => {
-    const noteId = req.params.id; //or const {id} = req.params;, and change wuery to [id]
+    const noteId = req.params.id; //or const {id} = req.params;, and change query to [id]
 
     const query = 'DELETE FROM notes WHERE id = ?';
 
@@ -257,6 +257,75 @@ app.delete('/MyNotes/:id', (req, res) => {
             return res.status(404).send('Note not found');
         }
         res.status(200).json({message: 'Note deleted successfully'});
+    });
+});
+
+//Get all budget entries for a specific user
+app.get('/MyBudget', (req, res) => {
+    const {username} = req.query;
+    const query = `SELECT id, title, amount, description, category FROM budget_entries WHERE username = ? ORDER BY category ASC, id ASC`;
+
+    db.query(query, [username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error fetching budget entries');
+        }
+        const groupedEntries = results.reduce((acc, entry) => {
+            if (!acc[entry.category]) {
+                acc[entry.category] = [];
+            }
+            acc[entry.category].push(entry);
+            return acc;
+        }, {});
+        res.json(groupedEntries);
+    });
+});
+
+//Add a new budget entry
+app.post('/MyBudget', (req, res) => {
+    const {title, amount, description, username, category = 'Uncategorized'} = req.body;
+
+    const query = `INSERT INTO budget_entries (title, amount, description, username, category) VALUES (?, ?, ?, ?, ?)`;
+
+    db.query(query, [title, amount, description, username, category], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error adding entry');
+        }
+
+        res.status(201).json({id: results.insertId});
+    });
+});
+
+//Update existing budget entry
+app.put('/MyBudget', (req, res) => {
+    const {id, title, amount, description, username, category} = req.body;
+
+    const query = 'UPDATE budget_entries SET title = ?, amount = ?, description = ?, category = ? WHERE id = ? AND username = ?';
+
+    db.query(query, [title, amount, description, category, id, username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error updating entry');
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).send('Entry not found');
+        }
+        res.status(200).json({message: 'Entry updated successfully!'});
+    });
+});
+
+//Delete a budget entry
+app.delete('/MyBudget/:id', (req, res) => {
+    const entryId = req.params.id; //or const {id} = req.params;, and change wuery to [id]
+
+    const query = 'DELETE FROM budget_entries WHERE id = ?';
+
+    db.query(query, [entryId], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error deleting entry');
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).send('Entry not found');
+        }
+        res.status(200).json({message: 'Entry deleted successfully'});
     });
 });
 

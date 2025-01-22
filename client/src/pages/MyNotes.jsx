@@ -164,8 +164,8 @@ const MyNotes = () => {
                         <h2>{cat}</h2>
                         <div className="notes-grid">
                         {notesByCategory[cat].map((note) => (
-                            <div key={note.id} className="notes-item" onClick={() => handleNoteClick(note)}>
-                                <div className="notes-header">
+                            <div key={note.id} className="note-item" onClick={() => handleNoteClick(note)}>
+                                <div className="note-header">
                                     <button onClick={(event) => deleteNote(event, note.id)}>x</button>
                                 </div>
                                 <h2>{note.title}</h2>
