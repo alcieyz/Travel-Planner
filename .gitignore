@@ -7,10 +7,17 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
+*.env
+
+node_modules/
+server/node_modules/
+client/node_modules/
+client/public/
 dist
 dist-ssr
 *.local
+
+UselessStuff/
 
 # Editor directories and files
 .vscode/*
@@ -22,3 +29,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+#HOW TO GIT
+# 1. Ensure you're on correct branch
+# 2. git pull origin main (Update your branch with latest changes from main)
+# 3. git add .
+# 4. git commit -m "Your commit message"
+# 5. git push origin <your-branch>
+# 6. Create pull request on GitHub, review, submit, (approve)
+# 7. Merge pull request into main on GitHub
+# 8. git checkout main (Switch to main branch)
+# 9. git pull origin main (Pull latest changes form the main)
+# 10. Optional: delete your feature branch
