@@ -357,6 +357,23 @@ app.delete('/MyBudget/:id', (req, res) => {
     });
 });
 
+app.post('/MyBudget/Budget', (req, res) => {
+    const {budget, username} = req.body;
+
+    const query = 'UPDATE users SET budget = ? WHERE username = ?';
+
+    db.query(query, [name, username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error updating total budget');
+        }
+
+        if (results.affectedRows == 0) {
+            return res.status(404).send('Total budget not updated');
+        }
+        res.status(200).json({message: 'Total budget updated successfully!', user: {budget}});
+    });
+});
+
 //Start the server on port 5000
 app.listen(5000, () => {
     console.log('Server running at http://localhost:5000'); //Log success message when server is up
