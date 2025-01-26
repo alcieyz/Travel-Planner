@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, Fragment} from "react";
 import './MyBudget.css';
 import {useAuth} from "../AuthContext";
 
@@ -9,9 +9,10 @@ const MyBudget = () => {
     const [customCategory, setCustomCategory] = useState("");
     const [categories, setCategories] = useState([]);
     const [title, setTitle] = useState("");
-    const [amount, setAmount] = useState(0.00);
+    const [amount, setAmount] = useState(0);
     const [description, setDescription] = useState("");
     const [selectedEntry, setSelectedEntry] = useState(null);
+    const [budget, setBudget] = useState(0);
 
     useEffect(() => {
         if (isLoggedIn && username) {
@@ -130,6 +131,34 @@ const MyBudget = () => {
         }
     };
 
+    const handleBudgetSubmit = async (event) => {
+        event.preventDefault();
+        if (!budget) {
+            alert("Please enter a monetary value");
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/MyBudget/Budget', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify({budget, username}),
+            });
+
+            if (response.ok) {
+                const message = await response.text();
+                throw new Error(message);
+            }
+
+            const data = await response.json();
+
+            //Successful
+        }
+        catch (err) {
+            alert(err.message);
+        }
+    }
+
     const resetForm = () => {
         setTitle("");
         setAmount(0);
@@ -198,6 +227,23 @@ const MyBudget = () => {
                         <button type="submit">Add Entry</button>
                     )}
                 </form>
+
+                <form onSubmit={handleBudgetSubmit}>
+                    <div className="inputs">
+                        <div className="input">
+                            <input 
+                                type="number"
+                                step="0.01"
+                                value={budget} 
+                                onChange={(event) => setBudget(event.target.value) }
+                                onBlur={(event) => setBudget(parseFloat(event.target.value || 0).toFixed(2))}
+                                placeholder="Total Budget ($)" required>
+                            </input>
+                            <button type="submit" className="submit">{(budget) ? "Change" : "Add"} Budget</button>
+                        </div>
+                    </div>
+                </form>
+
                 <table className="entry-table">
                     <thead>
                         <tr>
@@ -208,8 +254,8 @@ const MyBudget = () => {
                     </thead>
                     <tbody>
                         {Object.keys(entriesByCategory).map((cat) => (
-                            <>
-                                <tr key={cat} className="category-row">
+                            <Fragment key={cat}>
+                                <tr className="category-row">
                                     <td colSpan="3">{cat}</td>
                                 </tr>
                                 {entriesByCategory[cat].map((entry) => (
@@ -224,7 +270,7 @@ const MyBudget = () => {
                                         </td>
                                     </tr>
                                 ))}
-                            </>
+                            </Fragment>
                         ))}
                     </tbody>
                     <tfoot>

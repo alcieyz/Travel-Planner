@@ -10,14 +10,9 @@
 *.env
 
 node_modules/
-server/node_modules/
-client/node_modules/
-client/public/
 # dist
 # dist-ssr
 # *.local
-
-UselessStuff/
 
 # Editor directories and files
 # .vscode/*
