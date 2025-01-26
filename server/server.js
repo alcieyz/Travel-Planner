@@ -211,6 +211,20 @@ app.get('/MyNotes', (req, res) => {
     });
 });
 
+//Get all note categories for a specific user
+app.get('/MyNotes/GetUserCategories', (req, res) => {
+    const {username} = req.query;
+    const query = `SELECT DISTINCT category FROM notes WHERE username = ? AND category != 'Uncategorized' AND category != 'Attractions' AND category != 'Food' AND category != 'Stay' AND category != 'Other'`;
+
+    db.query(query, [username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error fetching notes');
+        }
+        const categories = results.map((row) => row.category);
+        res.json(categories);
+    });
+});
+
 //Add a new note
 app.post('/MyNotes', (req, res) => {
     const {title, content, username, category = 'Uncategorized'} = req.body;
@@ -277,6 +291,20 @@ app.get('/MyBudget', (req, res) => {
             return acc;
         }, {});
         res.json(groupedEntries);
+    });
+});
+
+//Get all budget entry categories for a specific user
+app.get('/MyBudget/GetUserCategories', (req, res) => {
+    const {username} = req.query;
+    const query = `SELECT DISTINCT category FROM budget_entries WHERE username = ? AND category != 'Uncategorized' AND category != 'Attractions' AND category != 'Food' AND category != 'Stay' AND category != 'Other'`;
+
+    db.query(query, [username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error fetching notes');
+        }
+        const categories = results.map((row) => row.category);
+        res.json(categories);
     });
 });
 

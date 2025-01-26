@@ -20,7 +20,49 @@ body {
     background-color: white;
 } */
 
-.entries-category {
+.category-row td {
+    font-weight: bold;
+    background-color: #e1f4ff;
+    text-align: left;
+    padding: 10px;
+}
+
+.entry-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    color: black;
+}
+
+.entry-table th {
+    border: 1px solid black;
+    padding: 8px;
+    background-color: white;
+}
+.entry-table td {
+    border: 1px solid black;
+    padding: 8px;
+}
+
+.entry-title {
+    font-weight: bold; /* Make the title stand out */
+    display: block; /* Ensure it stays on its own line */
+}
+
+.entry-description {
+    font-size: 0.9em; /* Slightly smaller font for the description */
+    color: #555; /* Different color for contrast */
+    display: block; /* Ensure it stays on its own line */
+    margin-top: 5px; /* Add spacing below the title */
+}
+
+.entry-table tr:hover {
+    background-color: rgb(255, 223, 253); /* Optional: Highlight row on hover */
+}
+
+/* .entries-category {
     margin-bottom: 20px;
 }
 
@@ -28,7 +70,7 @@ body {
     font-size: 1.5em;
     margin-bottom: 10px;
     color: #333;
-}
+} */
 
 /* .entries-grid {
     display: grid;
@@ -41,24 +83,35 @@ body {
     width: 100%;
 } */
 
-.entry-item {
+/* .entry-item {
     display: flex;
     flex-direction: column;
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 5px;
     background-color: #f9f9f9;
-    box-shadow: 0px 0px 10px
-        rgba(0, 0, 0, 0.1);
     cursor: pointer;
+    text-align: left;
+}
+
+.entry-item p {
+    margin: 0;
+    color: grey;
+    size: 12px;
 }
 
 .entry-header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between; Pushes title to the left and amount to the right
+    align-items: center;
+    margin: 0;
 }
 
-.entry-header button {
+.entry-header h3 {
+    margin: 0;
+}
+
+.entry-right button {
     font-size: 16px;
     background: transparent;
     border: none;
@@ -66,9 +119,10 @@ body {
     max-width: fit-content;
 }
 
-h2 {
-    margin: 0;
-}
+.entry-right {
+    display: flex;
+    justify-content: flex-end;
+} */
 
 textarea, input {
     border-radius: 5px;

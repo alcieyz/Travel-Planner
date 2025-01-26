@@ -84,6 +84,8 @@ export default function Root() {
 - budget calculator
 - when adding custom category, adds it into the select dropdown
 - budget stuff formatting, the decimal input
+- forgot password
+- tier list??
 */
 
 function stuff() {

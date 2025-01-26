@@ -7,6 +7,7 @@ const MyNotes = () => {
     const [notesByCategory, setNotesByCategory] = useState({});
     const [category, setCategory] = useState("Uncategorized");
     const [customCategory, setCustomCategory] = useState("");
+    const [categories, setCategories] = useState([]);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [selectedNote, setSelectedNote] = useState(null);
@@ -30,6 +31,25 @@ const MyNotes = () => {
             console.error("Error fetching notes:", error.message);
         }
     };
+
+    useEffect(() => {
+        const fetchUserCategories = async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/MyNotes/GetUserCategories?username=${username}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setCategories(data);
+                }
+                else {
+                    console.error('Error fetching categories');
+                }
+            }
+            catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        fetchUserCategories();
+    }, [username]);
 
     const handleNoteClick = (note) => {
         setSelectedNote(note);
@@ -140,6 +160,11 @@ const MyNotes = () => {
                         <option value="Food">Food</option>
                         <option value="Stay">Stay</option>
                         <option value="Other">Other</option>
+                        {categories.map((category) => (
+                            <option key={category} value={category}>
+                                {category}
+                            </option>
+                        ))}
                         {customCategory && <option value={customCategory}>{customCategory}</option>}
                     </select>
 
