@@ -49,8 +49,8 @@ h2 {
 
 h3 {
   color: black;
-  -webkit-text-stroke: powderblue;
-  -webkit-text-stroke-width: 0.5px;
+  /* -webkit-text-stroke: powderblue;
+  -webkit-text-stroke-width: 0.5px; */
 }
 
 h6 {
@@ -84,10 +84,10 @@ button:focus-visible {
 }
 
 /* table, th, td {
-  color:peachpuff;
+  color:black;
   border: 1px solid;
   border-collapse: collapse;
-  border-color:honeydew;
+  border-color:black;
   border-radius:10px;
   border-style:dashed;
   padding: 15px;
@@ -97,9 +97,9 @@ tr:first-child {
   background-color: rgb(34, 135, 148);
 }
   */
-td:hover {
+/* td:hover {
   background-color: rgb(34, 135, 148);
-}
+} */
 
 /*
 tr:nth-child(even), td:nth-child(even) {

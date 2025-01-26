@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('username');
         localStorage.removeItem('name');
         localStorage.removeItem('avatar');
+        setContextAvatar('/uploads/TP_person_icon.png');
         setIsLoggedIn(false);
     };
 

@@ -7,6 +7,7 @@ const MyBudget = () => {
     const [entriesByCategory, setEntriesByCategory] = useState({});
     const [category, setCategory] = useState("Uncategorized");
     const [customCategory, setCustomCategory] = useState("");
+    const [categories, setCategories] = useState([]);
     const [title, setTitle] = useState("");
     const [amount, setAmount] = useState(0.00);
     const [description, setDescription] = useState("");
@@ -31,6 +32,25 @@ const MyBudget = () => {
             console.error("Error fetching entries:", error.message);
         }
     };
+
+    useEffect(() => {
+        const fetchUserCategories = async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/MyBudget/GetUserCategories?username=${username}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setCategories(data);
+                }
+                else {
+                    console.error('Error fetching categories');
+                }
+            }
+            catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        fetchUserCategories();
+    }, [username]);
 
     const handleEntryClick = (entry) => {
         setSelectedEntry(entry);
@@ -118,6 +138,10 @@ const MyBudget = () => {
         setSelectedEntry(null);
     }
 
+    const totalAmount = Object.values(entriesByCategory)
+        .flat()
+        .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+
     return (
         <div className="page-container">
             <div className="budget-container">
@@ -134,7 +158,8 @@ const MyBudget = () => {
                         type="number"
                         step="0.01"
                         value={amount} 
-                        onChange={(event) => setAmount(parseFloat(event.target.value).toFixed(2)) }
+                        onChange={(event) => setAmount(event.target.value) }
+                        onBlur={(event) => setAmount(parseFloat(event.target.value || 0).toFixed(2))}
                         placeholder="Amount ($)" required>
                     </input>
                     <textarea 
@@ -149,6 +174,11 @@ const MyBudget = () => {
                         <option value="Food">Food</option>
                         <option value="Stay">Stay</option>
                         <option value="Other">Other</option>
+                        {categories.map((category) => (
+                            <option key={category} value={category}>
+                                {category}
+                            </option>
+                        ))}
                         {customCategory && <option value={customCategory}>{customCategory}</option>}
                     </select>
 
@@ -168,24 +198,42 @@ const MyBudget = () => {
                         <button type="submit">Add Entry</button>
                     )}
                 </form>
-                {Object.keys(entriesByCategory).map((cat) => (
-                    <div key={cat} className="entries-category">
-                        <h2>{cat}</h2>
-                        <div className="entries-grid">
-                        {entriesByCategory[cat].map((entry) => (
-                            <div key={entry.id} className="entry-item" onClick={() => handleEntryClick(entry)}>
-                                <div className="entry-header">
-                                    <button onClick={(event) => deleteEntry(event, entry.id)}>x</button>
-                                </div>
-                                <h2>{entry.title}</h2>
-                                <p>${entry.amount}</p>
-                                <p>{entry.description}</p>
-                            </div>
+                <table className="entry-table">
+                    <thead>
+                        <tr>
+                            <th>Details</th>
+                            <th>Amount</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {Object.keys(entriesByCategory).map((cat) => (
+                            <>
+                                <tr key={cat} className="category-row">
+                                    <td colSpan="3">{cat}</td>
+                                </tr>
+                                {entriesByCategory[cat].map((entry) => (
+                                    <tr key={entry.id} className="entry-item" onClick={() => handleEntryClick(entry)}>
+                                        <td>
+                                            <span className="entry-title">{entry.title}</span>
+                                            <span className="entry-description">{entry.description}</span>
+                                        </td>
+                                        <td>${entry.amount}</td>
+                                        <td>
+                                            <button onClick={(event) => deleteEntry(event, entry.id)}>x</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </>
                         ))}
-                        </div>
-                    </div>
-                ))}
-                <h2>There will be a total sum.</h2>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td><strong>${totalAmount.toFixed(2)}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
         </div>
     )
