@@ -362,7 +362,7 @@ app.post('/MyBudget/Budget', (req, res) => {
 
     const query = 'UPDATE users SET budget = ? WHERE username = ?';
 
-    db.query(query, [name, username], (err, results) => {
+    db.query(query, [budget, username], (err, results) => {
         if (err) {
             return res.status(500).send('Error updating total budget');
         }
@@ -371,6 +371,19 @@ app.post('/MyBudget/Budget', (req, res) => {
             return res.status(404).send('Total budget not updated');
         }
         res.status(200).json({message: 'Total budget updated successfully!', user: {budget}});
+    });
+});
+
+app.get('/MyBudget/GetUserBudget', (req, res) => {
+    const {username} = req.query;
+    const query = 'SELECT budget FROM users WHERE username = ?';
+
+    db.query(query, [username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error fetching total budget');
+        }
+        const budget = results[0].budget;
+        res.json({budget});
     });
 });
 

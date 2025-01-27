@@ -53,6 +53,26 @@ const MyBudget = () => {
         fetchUserCategories();
     }, [username]);
 
+    useEffect(() => {
+        if (isLoggedIn && username) {
+            fetchBudget();
+        }
+    }, [isLoggedIn, username]);
+
+    const fetchBudget = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/MyBudget/GetUserBudget?username=${username}`);
+            if (!response.ok) {
+                throw new Error("Failed to fetch total budget");
+            }
+            const data = await response.json();
+            setBudget(data.budget || 0);
+        }
+        catch (error) {
+            console.error("Error fetching total budget:", error.message);
+        }
+    };
+
     const handleEntryClick = (entry) => {
         setSelectedEntry(entry);
         setTitle(entry.title);
@@ -145,7 +165,7 @@ const MyBudget = () => {
                 body: JSON.stringify({budget, username}),
             });
 
-            if (response.ok) {
+            if (!response.ok) {
                 const message = await response.text();
                 throw new Error(message);
             }
@@ -153,6 +173,7 @@ const MyBudget = () => {
             const data = await response.json();
 
             //Successful
+            alert('Total budget updated successfully!');
         }
         catch (err) {
             alert(err.message);
@@ -231,6 +252,7 @@ const MyBudget = () => {
                 <form onSubmit={handleBudgetSubmit}>
                     <div className="inputs">
                         <div className="input">
+                            <h2>Budget:</h2>
                             <input 
                                 type="number"
                                 step="0.01"
@@ -277,6 +299,10 @@ const MyBudget = () => {
                         <tr>
                             <td><strong>Total</strong></td>
                             <td><strong>${totalAmount.toFixed(2)}</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Amount Remaining</strong></td>
+                            <td><strong>$ {(parseFloat(budget) - totalAmount).toFixed(2)}</strong></td>
                         </tr>
                     </tfoot>
                 </table>
