@@ -6,8 +6,10 @@ import ProtectedRoute from './ProtectedRoute';
 import Layout from "./pages/Layout";
 import Home from "./pages/Home";
 import MySchedule from "./pages/MySchedule";
+import MyMap from "./pages/MyMap";
 import MyBudget from "./pages/MyBudget";
 import MyNotes from './pages/MyNotes';
+import MySuggestions from './pages/MySuggestions';
 import LogIn from "./pages/LogIn";
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
@@ -26,8 +28,10 @@ function App() {
     const pageTitles = {
       "/": "Home - Travel Planner",
       "/MySchedule": "My Schedule - Travel Planner",
+      "/MyMap": "My Map - Travel Planner",
       "/MyBudget": "My Budget - Travel Planner",
       "/MyNotes": "My Notes - Travel Planner",
+      "/MySuggestions": "My Suggestions - Travel Planner",
       "/LogIn": "Log In - Travel Planner",
       "/SignUp": "Sign Up - Travel Planner",
       "/Dashboard": "Dashboard - Travel Planner",
@@ -42,9 +46,11 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="MySchedule" element ={<MySchedule/>} />
+        <Route path="MySchedule" element ={<ProtectedRoute><MySchedule/></ProtectedRoute>} />
+        <Route path="MyMap" element ={<ProtectedRoute><MyMap/></ProtectedRoute>} />
         <Route path="MyBudget" element ={<ProtectedRoute><MyBudget/></ProtectedRoute>} />
         <Route path="MyNotes" element ={<ProtectedRoute><MyNotes/></ProtectedRoute>} />
+        <Route path="MySuggestions" element ={<ProtectedRoute><MySuggestions/></ProtectedRoute>} />
         <Route path="LogIn" element ={<LogIn/>} />
         <Route path="SignUp" element ={<SignUp/>} />
 

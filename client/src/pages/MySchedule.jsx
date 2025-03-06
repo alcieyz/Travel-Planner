@@ -1,5 +1,6 @@
-import MyCalendar from "../components/MyCalendar";
+/* import MyCalendar from "../components/MyCalendar"; */
 import './MySchedule.css';
+import Calendar from '../components/Calendar';
 
 
 const MySchedule = () => {
@@ -8,7 +9,8 @@ const MySchedule = () => {
             <h1>My Schedule</h1>
             <h1>{"This is where your scheule goes we haven't made it yet Sorry"}</h1>
             <div className="calendar-container">
-                <MyCalendar />
+                {/* <MyCalendar /> */}
+                <Calendar/>
             </div>
         </div>
     )

@@ -5,11 +5,13 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const Groq = require('groq-sdk');
 require('dotenv').config();
 
 const app = express();
 app.use(bodyParser.json()); //Parse JSON body
 app.use(cors());
+app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../client/uploads'))); //Serve static files from the uploads directory
 
 const storage = multer.diskStorage({
@@ -38,6 +40,10 @@ db.connect((err) => {
         return;
     }
     console.log('Connected to MySQL');
+});
+
+const groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY,
 });
 
 //Signup route
@@ -188,6 +194,65 @@ app.post('/Dashboard/Profile/Avatar', upload.single('avatar'), (req, res) => {
             }
             res.status(200).json({message: 'Avatar updated successfully!', user: {avatarPath} });
         });
+    });
+});
+
+//Get all events for a specific user
+app.get('/MySchedule', (req, res) => {
+    const {username} = req.query;
+    const query = 'SELECT * FROM calendar_events WHERE username = ?';
+
+    db.query(query, [username], (err, results) => {
+        if (err) {
+            console.error('Error fetching events:', err);
+            return res.status(500).json({ error: 'Failed to fetch events', details: err.message});
+        }
+        res.json(results);
+    });
+});
+
+//Add a new event
+app.post('/MySchedule', (req, res) => {
+    const {username, title, description, start, end, color} = req.body;
+    const query = `INSERT INTO calendar_events (username, title, description, start, end, color) 
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+        title = VALUES(title),
+        description = VALUES(description),
+        start = VALUES(start),
+        end = VALUES(end),
+        color = VALUES(color)
+    `;
+
+    db.query(query, [username, title, description, start, end, color], (err, results) => {
+        if (err) {
+            console.error('Error saving event:', err);
+            return res.status(500).json({error: 'Failed to save event', details: err.message});
+        }
+        res.json({id: results.insertId, ...req.body });
+    });
+});
+
+app.put('/MySchedule/:id', (req, res) => {
+    const { id } = req.params;
+    const { title, description, start, end, color } = req.body;
+    const query = `
+        UPDATE calendar_events
+        SET title = ?, description = ?, start = ?, end = ?, color = ?
+        WHERE id = ?
+    `;
+    db.query(query, [title, description, start, end, color, id], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ id, ...req.body });
+    });
+});
+
+app.delete('/MySchedule/:id', (req, res) => {
+    const {id} = req.params;
+    const query = 'DELETE FROM calendar_events WHERE id = ?';
+    db.query(query, [id], (err, results) => {
+        if (err) return res.status(500).json({error: err.message});
+        res.json({message: 'Event deleted successfully'});
     });
 });
 
@@ -385,6 +450,37 @@ app.get('/MyBudget/GetUserBudget', (req, res) => {
         const budget = results[0].budget;
         res.json({budget});
     });
+});
+
+app.post('/api/travel-suggestions', async (req, res) => {
+    const {destination} = req.body;
+
+    if (!destination) {
+        return res.status(400).json({ error: 'Please provide a destination.'});
+    }
+
+    try {
+        const chatCompletion = await groq.chat.completions.create({
+            messages: [
+                {
+                    role: 'user',
+                    content: `Generate attraction suggestions for traveling to ${destination}.`,
+                },
+            ],
+            model: 'llama-3.3-70b-versatile',
+            temperature: 1,
+            max_completion_tokens: 200,
+            top_p: 1,
+            stream: false, // Disable streaming for simplicity
+            stop: null,
+        });
+
+        const suggestions = chatCompletion.choices[0]?.message?.content;
+        res.json({ suggestions });
+    } catch (error) {
+        console.error('Error fetching travel suggestions:', error);
+        res.status(500).json({ error: 'Failed to fetch travel suggestions.' });
+    }
 });
 
 //Start the server on port 5000

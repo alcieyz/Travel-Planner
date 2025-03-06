@@ -51,10 +51,6 @@ const Profile = () => {
             return;
         }
 
-        console.log("Selected file:", avatarFile);
-        console.log("File type:", avatarFile.type);
-        console.log("File name:", avatarFile.name);
-
         const formData = new FormData();
         formData.append('username', username);
         formData.append('avatar', avatarFile);
