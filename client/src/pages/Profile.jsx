@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {useAuth} from '../AuthContext';
 import './Profile.css';
+import SideMenu from '../components/SideMenu';
 
 const Profile = () => {
     const {username, contextName, updateName, contextAvatar, updateAvatar} = useAuth();
@@ -21,7 +22,7 @@ const Profile = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/Dashboard/Profile/Name', {
+            const response = await fetch('http://localhost:5000/Profile/Name', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json'},
                 body: JSON.stringify({ name, username }),
@@ -56,7 +57,7 @@ const Profile = () => {
         formData.append('avatar', avatarFile);
 
         try {
-            const response = await fetch('http://localhost:5000/Dashboard/Profile/Avatar', {
+            const response = await fetch('http://localhost:5000/Profile/Avatar', {
                 method: 'POST',
                 body: formData,
             });
@@ -76,32 +77,34 @@ const Profile = () => {
     };
 
     return (
-        <div>
-            <h2>Your Progile</h2>
-            <img src={contextAvatar || '/TP_person_icon.png'} alt="Avatar" className="avatar-img"/>
+        <div className='dashboard-page-container'>
+            <SideMenu/> 
+            <div className='dashboard-content'>
+                <h2>Your Profile</h2>
+                <img src={contextAvatar || '/TP_person_icon.png'} alt="Avatar" className="avatar-img"/>
 
-            <h3>Sorry youre gonna have to crop the iamge yourself if you want a circular profile.</h3>
-            <h3>Oh and if youll do me a favor and not upload any viruses thatd be much appreciated🤗</h3>
+                {/* <h3>Sorry youre gonna have to crop the iamge yourself if you want a circular profile.</h3>
+                <h3>Oh and if youll do me a favor and not upload any viruses thatd be much appreciated🤗</h3> */}
 
-            <form onSubmit={handleAvatarSubmit}>
-                <div className="inputs">
-                    <div className="input">
-                        <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])}/>
-                        <button type="submit" className="submit">{(contextAvatar !== '/uploads/TP_person_icon.png') ? "Change" : "Add"} Avatar</button>
+                <form onSubmit={handleAvatarSubmit}>
+                    <div>
+                        <div>
+                            <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])}/>
+                            <button type="submit" className="submit">{(contextAvatar !== '/uploads/TP_person_icon.png') ? "Change" : "Add"}&nbsp;Avatar</button>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
 
-            {contextName && <h3>Hi, {contextName}</h3>}
-            <form onSubmit={handleNameSubmit}>
-                <div className="inputs">
-                    <div className="input">
-                        <input type="text" placeholder={(contextName) ? contextName : "Name"} value={name || ''} onChange={(e) => setName(e.target.value)}/>
-                        <button type="submit" className="submit">{(contextName) ? "Change" : "Add"} Name</button>
+                {contextName && <h3>Hi, {contextName}</h3>}
+                <form onSubmit={handleNameSubmit}>
+                    <div>
+                        <div>
+                            <input type="text" placeholder={(contextName) ? contextName : "Name"} value={name || ''} onChange={(e) => setName(e.target.value)}/>
+                            <button type="submit" className="submit">{(contextName) ? "Change" : "Add"}&nbsp;Name</button>
+                        </div>
                     </div>
-                </div>
-            </form>
-            
+                </form>
+            </div>
         </div>
     )
 }

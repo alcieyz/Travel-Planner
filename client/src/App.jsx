@@ -35,8 +35,8 @@ function App() {
       "/LogIn": "Log In - Travel Planner",
       "/SignUp": "Sign Up - Travel Planner",
       "/Dashboard": "Dashboard - Travel Planner",
-      "/Dashboard/Profile": "Profile - Travel Planner",
-      "/Dashboard/Settings": "Settings - Travel Planner",
+      "/Profile": "Profile - Travel Planner",
+      "/Settings": "Settings - Travel Planner",
     };
 
     document.title = pageTitles[location.pathname] || "Travel Planner";
@@ -54,10 +54,9 @@ function App() {
         <Route path="LogIn" element ={<LogIn/>} />
         <Route path="SignUp" element ={<SignUp/>} />
 
-        <Route path="Dashboard" element ={<ProtectedRoute><Dashboard/></ProtectedRoute>}>
-          <Route path="Profile" element ={<ProtectedRoute><Profile/></ProtectedRoute>} />
-          <Route path="Settings" element ={<ProtectedRoute><Settings/></ProtectedRoute>} />
-        </Route>
+        <Route path="Dashboard" element ={<ProtectedRoute><Dashboard/></ProtectedRoute>}/>
+        <Route path="Profile" element ={<ProtectedRoute><Profile/></ProtectedRoute>} />
+        <Route path="Settings" element ={<ProtectedRoute><Settings/></ProtectedRoute>} />
 
         <Route path="*" element={<NoPage />} />
       </Route>
@@ -81,15 +80,10 @@ export default function Root() {
 /* Things to add:
 - password encryption
 - change username/password
-- protect myschedule route
 - about page
 - when note content has a super long word, it extends off the note
-- fix centering window size cuz theres a horizontal scroll bar for some strange reason
-- routing nav bar padding stuff
 - improve icons
-- budget calculator
-- when adding custom category, adds it into the select dropdown
-- budget stuff formatting, the decimal input
+- delete categories
 - forgot password
 - tier list??
 */

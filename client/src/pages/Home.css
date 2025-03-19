@@ -1,19 +1,177 @@
 .page-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    width: 100vw; /* % ?? */
-    /* max-width: 100%; */
-    /* max-width: 1200px; Limits width for large screens */
-    align-items: center;
+    background-color: rgb(255, 233, 245);
+    /* rgb(255, 200, 229) */
+    width: 100%;
     min-height: 100vh;
-    padding-top: 40px;
-    /* margin: 0 auto; */
-    /* box-sizing: border-box; Includes padding in width/height calculation */
+
+    display: flex;
+    justify-content: center;
+    text-align: center;
 }
 /*This code doesn't work whatsoever I am keeping it here for emotional Support.*/
 
-.cat_plane {
+.page-title {
+    padding: 75px;
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: flex-start;
+    box-sizing: border-box;
+}
+
+body, h1, p, a {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+
+.hero-section {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('../assets/hero_background3.png');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    text-align: center;
+}
+
+.hero-content {
+    max-width: 600px;
+    padding: 20px;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.cta-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: black;
+    background: linear-gradient(45deg, rgb(115, 255, 153), rgb(217, 255, 227));
+    border-radius: 25px;
+    border: none;
+    box-sizing: border-box; /* Include padding in element dimensions */
+    transition: all 0.3s ease;
+    position: relative; 
+}
+
+.cta-btn:hover {
+    background: none;
+    color: black;
+    outline: 2px solid rgb(84, 255, 130);
+    outline-offset: -2px;
+}
+
+.about-section {
+    padding: 5rem 6rem;
+    background-color: white;
+}
+
+.about-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 2rem;
+}
+
+.about-image {
+    flex: 1;
+    width: 50%;
+    max-width: 50%;
+}
+
+.about-image img {
+    width: 50%;
+    height: auto;
+    display: block;
+}
+
+.about-text {
+    flex: 1;
+    width: 50%;
+    max-width: 50%
+}
+
+.about-text h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.about-text p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #666;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .about-content {
+        flex-direction: column;
+    }
+
+    .about-image, .about-text {
+        flex: none;
+        width: 100%;
+    }
+
+    .about-image img {
+        margin-bottom: 1rem;
+    }
+}
+
+.offerings-section {
+    padding: 5rem 6rem;
+    background-color: rgb(255, 200, 229);
+}
+
+.offerings-content h2{
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: black;    
+}
+
+.footer-section {
+    padding: 5rem 6rem;
+    background-color: rgb(39, 39, 39);
+}
+
+.footer-content p{
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    text-align: left;  
+}
+
+.logo h2 {
+    color: white;
+}
+
+/* .cat_plane {
     width:300px;
     height:auto;
 }
+
+.description-container {
+    text-align: left;
+} */

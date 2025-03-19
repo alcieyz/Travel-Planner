@@ -105,7 +105,7 @@ app.post('/LogIn', (req, res) => {
 });
 
 //Delete Account
-app.delete('/Dashboard/Settings/:username', (req, res) => {
+app.delete('/Settings/:username', (req, res) => {
     const username = req.params.username;
 
     const getOldAvatarQuery = 'SELECT avatar FROM users WHERE username = ?';
@@ -141,7 +141,7 @@ app.delete('/Dashboard/Settings/:username', (req, res) => {
 });
 
 //Profile Name route
-app.post('/Dashboard/Profile/Name', (req, res) => {
+app.post('/Profile/Name', (req, res) => {
     const {name, username} = req.body; 
 
     const query = 'UPDATE users SET name = ? WHERE username = ?';
@@ -159,7 +159,7 @@ app.post('/Dashboard/Profile/Name', (req, res) => {
 });
 
 //Profile Avatar route
-app.post('/Dashboard/Profile/Avatar', upload.single('avatar'), (req, res) => {
+app.post('/Profile/Avatar', upload.single('avatar'), (req, res) => {
     const {username} = req.body;
 
     const avatarPath = `/uploads/${req.file.filename}`;
@@ -253,6 +253,41 @@ app.delete('/MySchedule/:id', (req, res) => {
     db.query(query, [id], (err, results) => {
         if (err) return res.status(500).json({error: err.message});
         res.json({message: 'Event deleted successfully'});
+    });
+});
+
+app.get('/MyMap', (req, res) => {
+    const {username} = req.query;
+    const query = `SELECT id, lat, lng, name FROM map_markers WHERE username = ?`;
+
+    db.query(query, [username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error fetching markers');
+        }
+        res.json(results);
+    });
+});
+
+app.post('/MyMap', (req, res) => {
+    const {username, lat, lng, name} = req.body;
+    const query = 'INSERT INTO map_markers (username, lat, lng, name) VALUES (?, ?, ?, ?)';
+    db.query(query, [username, lat, lng, name], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error saving marker');
+        }
+        res.send('Marker saved successfully');
+    });
+});
+
+app.delete('/MyMap/:id', (req, res) => {
+    const {id} = req.params;
+    const {username} = req.body;
+    const query = 'DELETE FROM map_markers WHERE id = ?';
+    db.query(query, [id, username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error deleting marker');
+        }
+        res.send('Marker deleted successfully');
     });
 });
 
@@ -453,7 +488,7 @@ app.get('/MyBudget/GetUserBudget', (req, res) => {
 });
 
 app.post('/api/travel-suggestions', async (req, res) => {
-    const {destination} = req.body;
+    const {destination, details} = req.body;
 
     if (!destination) {
         return res.status(400).json({ error: 'Please provide a destination.'});
@@ -464,12 +499,12 @@ app.post('/api/travel-suggestions', async (req, res) => {
             messages: [
                 {
                     role: 'user',
-                    content: `Generate attraction suggestions for traveling to ${destination}.`,
+                    content: `Generate attraction, restaurant, and lodging suggestions for traveling to ${destination}. ${details}`,
                 },
             ],
             model: 'llama-3.3-70b-versatile',
             temperature: 1,
-            max_completion_tokens: 200,
+            max_completion_tokens: 1000,
             top_p: 1,
             stream: false, // Disable streaming for simplicity
             stop: null,

@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {useAuth} from '../AuthContext';
 import './Settings.css';
+import SideMenu from '../components/SideMenu';
 
 const Settings = () => {
     const {username, logOut} = useAuth();
@@ -14,7 +15,7 @@ const Settings = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:5000/Dashboard/Settings/${username}`, {
+            const response = await fetch(`http://localhost:5000/Settings/${username}`, {
                 method: 'DELETE',
             });
             if (!response.ok) {
@@ -32,10 +33,13 @@ const Settings = () => {
     };
 
     return (
-        <div>
-            <h2>Settings</h2>
-            <h3>Theme?</h3>
-            <button className="delete-acc-btn" onClick={(e) => handleDeleteAccount(e, username)}>Delete Account</button>
+        <div className='dashboard-page-container'>
+            <SideMenu/>
+            <div className='dashboard-content'>
+                <h2>Settings</h2>
+                <h3>Theme? light/dark mode, skins</h3>
+                <button className="delete-acc-btn" onClick={(e) => handleDeleteAccount(e, username)}>Delete Account</button>
+            </div>
         </div>
     )
 }

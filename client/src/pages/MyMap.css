@@ -1,4 +1,34 @@
-.map-container {
-    height: 500px;
+.map-page-container {
+    background-color: rgb(255, 200, 229);
     width: 100%;
-  }
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* .map-banner {
+    background-image: url(../assets/mymap_banner.png);
+    background-size: contain;
+    background-position: center;
+    height: auto;
+    width: 100%;
+} */
+
+.map-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 100px 0px;
+    width: 100%;
+}
+
+.map-page-title {
+    padding: 75px;
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: flex-start;
+    box-sizing: border-box;
+}

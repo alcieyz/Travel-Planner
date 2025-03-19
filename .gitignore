@@ -36,3 +36,21 @@ node_modules/
 # 8. git checkout main (Switch to main branch)
 # 9. git pull origin main (Pull latest changes form the main)
 # 10. Optional: delete your feature branch
+
+#log into mysql: 
+#1. navigate to folder
+#2. mysql -u root -p
+#3. enter pw
+#4. USE user_auth;
+
+#clear mysql query: \c
+
+# CREATE TABLE map_markers (
+#     -> id INT AUTO_INCREMENT PRIMARY KEY,
+#     -> username VARCHAR(255) NOT NULL,
+#     -> lat DECIMAL (10, 6) NOT NULL,
+#     -> lng DECIMAL(10, 6) NOT NULL,
+#     -> name TEXT,
+#     -> created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+#     -> INDEX username_index (username)
+#     -> );

@@ -1,0 +1,86 @@
+.show-menu-btn {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+    z-index: 10000; /* Ensure the button is above other content */
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    background: none;
+    color: white;
+}
+
+.show-menu-btn:hover {
+    color: #1abc9c;
+    outline: none;
+}
+
+.side-menu-container .side-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    transition: transform 0.3s ease;
+    width: 200px; /* fixed width of menu */
+    padding: 20px;
+    padding-top: calc(20px + 2rem);
+    position: fixed;
+    top: 0;
+    left: -250px;
+    bottom: 0;
+    background-color: #333;
+    color: white;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 9999; /* Ensure menu stays above content */
+}
+
+.side-menu-container .side-menu h2 {
+    color: rgb(255, 189, 234);
+}
+
+.side-menu-container .side-menu h3{
+    color: white;
+}
+
+.side-menu-container .side-menu.visible {
+    transform: translateX(250px); /* Slide menu into view */
+}
+
+.side-menu h3 {
+    margin: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #555;
+}
+
+.side-menu ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.side-menu li {
+    margin: 20px 0;
+}
+
+.side-menu ul li {
+    margin: 10px 0;
+}
+
+.side-menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.side-menu a:hover {
+    color: #1abc9c;
+}
+
+.log-out {
+    color: red;
+}
+
+.log-out:hover {
+    color: red;
+}

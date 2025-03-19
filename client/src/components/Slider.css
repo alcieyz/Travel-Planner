@@ -1,0 +1,109 @@
+.slider-container {
+    background-color: rgb(255, 200, 229); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+}
+
+.swiper {
+    width: 80%;
+    max-width: 1200px;
+}
+
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+}
+
+.swiper-pagination-bullet-active {
+    background-color: rgb(255, 47, 157);
+}
+
+.swiper-button-prev, .swiper-button-next {
+    color: rgb(255, 200, 229);
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    z-index: 10;
+    position: absolute;
+}
+
+.swiper-button-prev svg {
+    transform: translateX(-1.5px);
+}
+
+.swiper-button-next svg {
+    transform: translateX(1.5px);
+}
+
+.swiper-button-next svg path,
+.swiper-button-prev svg path {
+    transform: scale(0.6); /* Resize the path to 80% of the original size */
+    transform-origin: center center; /* Ensure scaling is centered */
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+    content: none;
+}
+
+.swiper-button-prev {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.swiper-button-next {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.swiper-button-prev:hover, .swiper-button-next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.card {
+    background: white;
+    width: 250px;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.card img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.card h3 {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.card p {
+    font-size: 1rem;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    /* Adjust for smaller screens */
+    .swiper-button-next,
+    .swiper-button-prev {
+      width: 35px;
+      height: 35px;
+    }
+  
+    .swiper-pagination-bullet {
+      width: 10px;
+      height: 10px;
+    }
+  }

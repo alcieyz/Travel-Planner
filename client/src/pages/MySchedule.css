@@ -52,26 +52,6 @@
 }
 
 
-button {
-    margin: 3px;
-    background-color: #fff0f9 !important;
-    border: 0;
-    border-radius: 15px;
-    color: rgb(0, 0, 0);
-    padding: 5px 0;
-
-
-    &:hover {
-      background-color: #fde8f5 !important;
-    }
-
-
-    &:active {
-      background-color: lavender !important;
-    }
-  }
-
-
 .react-calendar__month-view__days {
     display: grid !important;
     grid-template-columns: 14.2% 14.2% 14.2% 14.2% 14.2% 14.2% 14.2%;

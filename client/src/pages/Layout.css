@@ -4,6 +4,22 @@
     top: 0;
     left: 0;
     width: 100%;
+    height: 1.5rem;
+    padding: 1rem;
+    z-index: 1000;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+}
+
+.navigation-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin-right: 20px;
     height: 3vh;
     padding: 1rem; /* Scales with root font size */
     z-index: 1000;
@@ -14,25 +30,39 @@
     gap: 1rem; /* Consistent spacing between items */
 }
 
+.logo-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin-left: 50px;
+}
+.logo-container h2{
+    color: rgb(255, 189, 234);
+    font-size: 1.6rem;
+    padding: 1vh;
+}
+
 .link{
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-size: 1.2rem;
-    color:pink;
+    color:rgb(255, 233, 245);
     padding:2vh;
 }
 
 .link:hover {
-    color:black;
-    background-color: lavender;
-    border-style: transparent;
-    border-radius: 10%;
+    color:#1abc9c;
+    transition: all 0.3s ease;
+    /* text-decoration: underline;
+    text-decoration-color: rgb(255, 189, 234);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px; */
 }
 
 .avatar-icon {
     height: 2rem;
     width: auto;
     border-style: solid;
-    border-color: white;
+    border-color: rgb(255, 233, 245);
     border-width: 0.15rem;
     border-radius: 50%;
 }

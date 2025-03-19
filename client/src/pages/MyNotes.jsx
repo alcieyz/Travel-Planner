@@ -1,6 +1,7 @@
 import {useState, useEffect} from "react";
 import './MyNotes.css';
 import {useAuth} from "../AuthContext";
+import SideMenu from '../components/SideMenu';
 
 const MyNotes = () => { 
     const { username, isLoggedIn } = useAuth();
@@ -120,6 +121,7 @@ const MyNotes = () => {
                 throw new Error("Failed to delete note");
             }
             fetchNotes();
+            resetForm();
             alert('Note deleted successfully')
         }
         catch (error) {
@@ -138,8 +140,11 @@ const MyNotes = () => {
 
     return (
         <div className="page-container">
-            <div className="notes-container">
-                <h1>My Notes</h1>
+            <SideMenu/>
+            <div className="notes-content">
+                <div className="page-title">
+                    <h1>My Notes</h1>
+                </div>
                 <form className="notes-form" onSubmit={selectedNote ? handleUpdateNote : handleAddNote}>
                     <input 
                         value={title} 
@@ -154,6 +159,7 @@ const MyNotes = () => {
                         placeholder="Content" rows={10} required>
                     </textarea>
 
+                    <div className='category-input'>
                     <select className="select-dropdown" value={category} onChange={(event) => setCategory(event.target.value)}>
                         <option value="Uncategorized">Uncategorized</option>
                         <option value="Attractions">Attractions</option>
@@ -170,15 +176,26 @@ const MyNotes = () => {
 
                     <input 
                         type="text" 
+                        maxLength={80}
                         placeholder="Add custom category" 
                         value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} 
                         onBlur={() => customCategory && setCategory(customCategory)} //Automatically select custom category
                     />
+                    </div>
 
                     {selectedNote ? (
-                        <div className="edit-buttons">
-                            <button type="submit">Save</button>
-                            <button type="button" onClick={resetForm}>Cancel</button>
+                        <div className="edit-btns">
+                            <button className='delete-btn' 
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    deleteNote(event, selectedNote.id);
+                                }}
+                            >
+                                Delete</button>
+                            <div className="save-cancel">
+                                <button type="submit">Save</button>
+                                <button type="button" onClick={resetForm}>Cancel</button>
+                            </div>
                         </div>
                     ) : (
                         <button type="submit">Add Note</button>
@@ -189,10 +206,7 @@ const MyNotes = () => {
                         <h2>{cat}</h2>
                         <div className="notes-grid">
                         {notesByCategory[cat].map((note) => (
-                            <div key={note.id} className="note-item" onClick={() => handleNoteClick(note)}>
-                                <div className="note-header">
-                                    <button onClick={(event) => deleteNote(event, note.id)}>x</button>
-                                </div>
+                            <div key={note.id} className={`note-item ${selectedNote === note ? "selected" : ""}`} onClick={() => handleNoteClick(note)}>
                                 <h2>{note.title}</h2>
                                 <p>{note.content}</p>
                             </div>

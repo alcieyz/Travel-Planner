@@ -1,81 +1,109 @@
-.dashboard-container {
-    display: flex;
+.dashboard-page-container {
+    background-color: rgb(255, 200, 229);
     width: 100%;
-    position: relative; /* Position the side menu over content without shifting */
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    text-align: center;
 }
 
 .dashboard-container.menu-visible.main-content {
     margin-left: 200px; /* Give space for side menu */
 }
 
-.main-content {
-    flex: 1; /* Take up available space */
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
+.dashboard-content {
+    margin: 100px 0px;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0px 100px;
+}
+
+.dashboard-content h1{
     text-align: center;
-    margin-left: 0; /* Defeult centered content */
-    padding: 20px;
-    flex-grow: 1;
-    height: auto;
+    margin: 50px 0px;
 }
 
-.show-menu-btn {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    cursor: pointer;
-    z-index: 1000; /* Ensure the button is above other content */
+.dashboard-content h2{
+    text-align: left;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 50px 0px;
 }
 
-.side-menu {
+.dashboard-content h3{
+    color: black;
+    text-align: left;
+    font-size: 2rem;
+    margin: 50px 0px;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(250px, 1fr)); /* Responsive columns */
+    gap: 30px; /* Space between items */
+    padding: 0px; /* Padding around the grid */
+}
+
+.tools-item {
+    padding: 20px 30px;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    overflow: hidden; /* Ensure content stays within the box */
+    text-align: center;
+    background: #fff; /* Background color */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    transition: transform 0.3s ease;
-    width: 200px; /* fixed width of menu */
-    padding: 20px;
-    position: fixed;
-    top: 0;
-    left: -250px;
-    bottom: 0;
-    background-color: #333;
-    color: white;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    z-index: 999; /* Ensure menu stays above content */
+    justify-content: space-between;
 }
 
-.side-menu.visible {
-    transform: translateX(250px); /* Slide menu into view */
+.tools-item img {
+    width: 100%;
+    object-fit: cover; /* Ensure images cover the area without distortion */
 }
 
-.side-menu h3 {
-    margin: 0;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #555;
+.tools-item h3 {
+    text-align: center;
+    margin: 15px 0 10px;
+    font-size: 1.2em;
 }
 
-.side-menu ul {
-    list-style-type: none;
-    padding: 0;
+.tools-item p {
+    margin: 0 0 15px;
+    font-size: 1.1em;
+    color: #333;
 }
 
-.side-menu li {
-    margin: 20px 0;
+.tools-item:hover {
+    transform: translateY(-5px); /* Lift the item on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Enhance shadow on hover */
 }
 
-.side-menu ul li {
-    margin: 10px 0;
+@media (max-width: 1200px) {
+    .tools-grid {
+        grid-template-columns: repeat(3, minmax(250px, 1fr));
+    }
 }
 
-.side-menu a {
-    color: white;
-    text-decoration: none;
-    font-size: 16px;
-    transition: color 0.3s ease;
+@media (max-width: 800px) {
+    .tools-grid {
+        grid-template-columns: repeat(2, minmax(250px, 1fr));
+    }
 }
 
-.side-menu a:hover {
-    color: #1abc9c;
+@media (max-width: 500px) {
+    .tools-grid {
+        grid-template-columns: repeat(1, minmax(150px, 1fr));
+    }
+}
+
+.go-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 20px;
 }

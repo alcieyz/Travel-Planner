@@ -1,6 +1,7 @@
 import {useState, useEffect, Fragment} from "react";
 import './MyBudget.css';
 import {useAuth} from "../AuthContext";
+import SideMenu from '../components/SideMenu';
 
 const MyBudget = () => {
     const { username, isLoggedIn } = useAuth();
@@ -143,6 +144,7 @@ const MyBudget = () => {
                 throw new Error("Failed to delete entry");
             }
             fetchEntries();
+            resetForm();
             alert('Entry deleted successfully')
         }
         catch (error) {
@@ -194,8 +196,11 @@ const MyBudget = () => {
 
     return (
         <div className="page-container">
-            <div className="budget-container">
-                <h1>My Budget</h1>
+            <SideMenu/>
+            <div className="budget-content">
+                <div className="page-title">
+                    <h1>My Budget</h1>
+                </div>
                 <form className="budget-form" onSubmit={selectedEntry ? handleUpdateEntry : handleAddEntry}>
                     <input 
                         value={title} 
@@ -204,108 +209,119 @@ const MyBudget = () => {
                         }
                         placeholder="Title" required>
                     </input>
-                    <input 
-                        type="number"
-                        step="0.01"
-                        value={amount} 
-                        onChange={(event) => setAmount(event.target.value) }
-                        onBlur={(event) => setAmount(parseFloat(event.target.value || 0).toFixed(2))}
-                        placeholder="Amount ($)" required>
-                    </input>
+                    <div className='amount-input'>
+                        <h2>Amount:</h2>
+                        <input 
+                            type="number"
+                            step="0.01"
+                            value={amount} 
+                            onChange={(event) => setAmount(event.target.value) }
+                            onBlur={(event) => setAmount(parseFloat(event.target.value || 0).toFixed(2))}
+                            placeholder="Amount" required>
+                        </input>
+                    </div>
                     <textarea 
                         value={description}
                         onChange={(event) => setDescription(event.target.value)}
                         placeholder="Description" rows={1}>
                     </textarea>
+                    
+                    <div className="category-input">
+                        <select className="select-dropdown" value={category} onChange={(event) => setCategory(event.target.value)}>
+                            <option value="Uncategorized">Uncategorized</option>
+                            <option value="Attractions">Attractions</option>
+                            <option value="Food">Food</option>
+                            <option value="Stay">Stay</option>
+                            <option value="Other">Other</option>
+                            {categories.map((category) => (
+                                <option key={category} value={category}>
+                                    {category}
+                                </option>
+                            ))}
+                            {customCategory && <option value={customCategory}>{customCategory}</option>}
+                        </select>
 
-                    <select className="select-dropdown" value={category} onChange={(event) => setCategory(event.target.value)}>
-                        <option value="Uncategorized">Uncategorized</option>
-                        <option value="Attractions">Attractions</option>
-                        <option value="Food">Food</option>
-                        <option value="Stay">Stay</option>
-                        <option value="Other">Other</option>
-                        {categories.map((category) => (
-                            <option key={category} value={category}>
-                                {category}
-                            </option>
-                        ))}
-                        {customCategory && <option value={customCategory}>{customCategory}</option>}
-                    </select>
-
-                    <input 
-                        type="text" 
-                        placeholder="Add custom category" 
-                        value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} 
-                        onBlur={() => customCategory && setCategory(customCategory)} //Automatically select custom category
-                    />
+                        <input 
+                            type="text" 
+                            maxLength={80}
+                            placeholder="Add custom category" 
+                            value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} 
+                            onBlur={() => customCategory && setCategory(customCategory)} //Automatically select custom category
+                        />
+                    </div>
 
                     {selectedEntry ? (
-                        <div className="edit-buttons">
-                            <button type="submit">Save</button>
-                            <button type="button" onClick={resetForm}>Cancel</button>
+                        <div className="edit-btns">
+                            <button className='delete-btn' 
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    deleteEntry(event, selectedEntry.id);
+                                }}
+                            >
+                                Delete</button>
+                            <div className="save-cancel">
+                                <button type="submit">Save</button>
+                                <button className="cancel-btn" onClick={resetForm}>Cancel</button>
+                                </div>
                         </div>
                     ) : (
                         <button type="submit">Add Entry</button>
                     )}
                 </form>
 
-                <form onSubmit={handleBudgetSubmit}>
-                    <div className="inputs">
-                        <div className="input">
-                            <h2>Budget:</h2>
-                            <input 
-                                type="number"
-                                step="0.01"
-                                value={budget} 
-                                onChange={(event) => setBudget(event.target.value) }
-                                onBlur={(event) => setBudget(parseFloat(event.target.value || 0).toFixed(2))}
-                                placeholder="Total Budget ($)" required>
-                            </input>
-                            <button type="submit" className="submit">{(budget) ? "Change" : "Add"} Budget</button>
-                        </div>
+                <form className='budget-form' onSubmit={handleBudgetSubmit}>
+                    <div className="budget-input">
+                        <h2>Budget:</h2>
+                        <input 
+                            type="number"
+                            step="0.01"
+                            value={budget} 
+                            onChange={(event) => setBudget(event.target.value) }
+                            onBlur={(event) => setBudget(parseFloat(event.target.value || 0).toFixed(2))}
+                            placeholder="Total Budget" required>
+                        </input>
+                        <button type="submit" className="submit">{(budget) ? "Change" : "Add"}&nbsp;Budget</button>
                     </div>
                 </form>
 
-                <table className="entry-table">
-                    <thead>
-                        <tr>
-                            <th>Details</th>
-                            <th>Amount</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Object.keys(entriesByCategory).map((cat) => (
-                            <Fragment key={cat}>
-                                <tr className="category-row">
-                                    <td colSpan="3">{cat}</td>
-                                </tr>
-                                {entriesByCategory[cat].map((entry) => (
-                                    <tr key={entry.id} className="entry-item" onClick={() => handleEntryClick(entry)}>
-                                        <td>
-                                            <span className="entry-title">{entry.title}</span>
-                                            <span className="entry-description">{entry.description}</span>
-                                        </td>
-                                        <td>${entry.amount}</td>
-                                        <td>
-                                            <button onClick={(event) => deleteEntry(event, entry.id)}>x</button>
-                                        </td>
+                <div className="table-container">
+                    <table className="entry-table">
+                        <thead>
+                            <tr>
+                                <th>Details</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {Object.keys(entriesByCategory).map((cat) => (
+                                <Fragment key={cat}>
+                                    <tr className="category-row">
+                                        <td colSpan="2">{cat}</td>
                                     </tr>
-                                ))}
-                            </Fragment>
-                        ))}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td><strong>Total</strong></td>
-                            <td><strong>${totalAmount.toFixed(2)}</strong></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Amount Remaining</strong></td>
-                            <td><strong>$ {(parseFloat(budget) - totalAmount).toFixed(2)}</strong></td>
-                        </tr>
-                    </tfoot>
-                </table>
+                                    {entriesByCategory[cat].map((entry) => (
+                                        <tr key={entry.id} className={`entry-item ${selectedEntry === entry ? "selected" : ""}`} onClick={() => handleEntryClick(entry)}>
+                                            <td>
+                                                <span className="entry-title">{entry.title}</span>
+                                                <span className="entry-description">{entry.description}</span>
+                                            </td>
+                                            <td>${entry.amount}</td>
+                                        </tr>
+                                    ))}
+                                </Fragment>
+                            ))}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                <td><strong>${totalAmount.toFixed(2)}</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Amount Remaining</strong></td>
+                                <td><strong>$ {(parseFloat(budget) - totalAmount).toFixed(2)}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         </div>
     )
