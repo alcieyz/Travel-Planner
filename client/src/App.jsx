@@ -59,7 +59,7 @@ return (
             <Route path="SignUp" element ={<SignUp/>} />
 
             <Route path="Dashboard" element ={<ProtectedRoute><Dashboard/></ProtectedRoute>}/>
-            <Route path="Dashboard/MyTrips" element ={<ProtectedRoute><MyTrips/></ProtectedRoute>}/>
+            <Route path="MyTrips" element ={<ProtectedRoute><MyTrips/></ProtectedRoute>}/>
             <Route path="Profile" element ={<ProtectedRoute><Profile/></ProtectedRoute>} />
             <Route path="Settings" element ={<ProtectedRoute><Settings/></ProtectedRoute>} />
           </Route>
@@ -91,14 +91,14 @@ export default function Root() {
 - about page
 - when note content has a super long word, it extends off the note
 - improve icons
-- delete categories
 - forgot password
 - tier list??
 - ai travel itinerary
 - my map cancel button after marker preview
 - my map preview marker different color markers
 - include budget in suggestions
-- WHY CANT I GET RID OF THE SIDEBAR WHEN GOING BACK TO HOME PAGE
+- horz nav bar/menu on home page similar to notion
+- add spending progress bar to budget
 
 - dashboard trips: 
   context menu (right click functionality)

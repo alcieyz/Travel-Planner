@@ -50,7 +50,7 @@ const LogIn = () => {
         } catch (err) {  
             alert(err.message); //Show error message if there's issue with the request
             //Clear input fields
-            setUsername('');
+           /*  setUsername(''); */
             setPw('');
         }
     };

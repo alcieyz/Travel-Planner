@@ -14,7 +14,7 @@ const Layout = ({children}) => {
     const location = useLocation();
 
     const isHomePage = location.pathname === '/';
-    const showSidebar = isLoggedIn && !isHomePage;
+    const showSidebar = !isHomePage;
 
     const startResizing = () => {
         setIsResizing(true);
@@ -52,7 +52,7 @@ const Layout = ({children}) => {
         setIsCollapsed(!isCollapsed);
     };
 
-    const handleLogout = () => {
+    const handleLogOut = () => {
         const confirmLogOut = window.confirm("Are you sure you want to log out?");
         if (!confirmLogOut) {
             return;
@@ -64,11 +64,11 @@ const Layout = ({children}) => {
 
     return (
         <div className="app-container">
-            {isLoggedIn && (
+            {isLoggedIn && showSidebar && (
                 <div 
                     className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}
                     ref={sidebarRef}
-                    style={{ width: isCollapsed ? '70px' : `${sidebarWidth}px` }}
+                    style={{ width: isCollapsed ? '30px' : `${sidebarWidth}px` }}
                 >
                     <div className="sidebar-header">
                         <div className="header-top-row">
@@ -178,7 +178,7 @@ const Layout = ({children}) => {
                         <li>
                             <button 
                                 className="logout-btn" 
-                                onClick={handleLogout}
+                                onClick={handleLogOut}
                                 title={isCollapsed ? "Log Out" : undefined}
                             >
                                 {isCollapsed ? '🚪' : 'Log Out'}
@@ -203,7 +203,7 @@ const Layout = ({children}) => {
                 <main 
                     className="main-content"
                     style={{
-                        marginLeft: isLoggedIn ? (isCollapsed ? '60px' : `calc(${sidebarWidth}px + 30px)`) : '0',
+                        marginLeft: isLoggedIn && showSidebar ? (isCollapsed ? '60px' : `calc(${sidebarWidth}px + 30px)`) : '0',
                         transition: 'margin-left 0.3s ease'
                     }}
                 >
