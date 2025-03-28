@@ -83,8 +83,12 @@ const Map = () => {
                         name: previewMarker.name,
                     }),
                 });
+                
+                const data = await response.json();
+
                 if (!response.ok) {
-                    throw new Error('Failed to save marker');
+                    // This will catch both 400 and 500 errors
+                    throw new Error(data.error || 'Failed to save marker');
                 }
 
                 fetchMarkers();
@@ -92,6 +96,12 @@ const Map = () => {
                 setSearchQuery('');
             } catch (error) {
                 console.error('Error saving marker:', error);
+
+                if (error.message.includes('already have a marker')) {
+                    setPreviewMarker(null);
+                }
+
+                alert(error.message);
             }
         }
     };

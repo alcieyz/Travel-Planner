@@ -30,13 +30,30 @@
 .suggestions-search-bar {
     padding: 10px 20px;
     border: none;
-    height: 24px;
+    height: 44px;
     border-radius: 24px;
-    width: 40%;
+    width: 45%;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
 }
 
 .suggestions-search-bar:focus {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    outline: none;
+}
+
+.suggestions-select-bar {
+    color: black;
+    background-color: white;
+    padding: 10px 20px;
+    border: none;
+    height: 44px;
+    border-radius: 24px;
+    width: 45%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.suggestions-select-bar:focus {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     outline: none;
 }

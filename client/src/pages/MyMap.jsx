@@ -7,9 +7,12 @@ import MapBanner from '../assets/mymap_banner.png';
 
 const MyMap = () => {
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     return (
         <div className="page-container">
-            <SideMenu/>
             <div className='map-content'>
                 {/* <div className="map-banner">
                     <img src={MapBanner} alt='Map Banner'/>

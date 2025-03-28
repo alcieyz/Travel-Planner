@@ -1,4 +1,5 @@
 import {useAuth} from '../AuthContext';
+import {useEffect} from 'react';
 import './Home.css';
 import AboutImage from '../assets/about_image_small.png'
 import Slider from '../components/Slider';
@@ -9,13 +10,17 @@ const Home = () => {
 
     const {isLoggedIn} = useAuth();
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     return (
         <div className='home-page'>
             <section className="hero-section">
                 <div className='hero-content'>
                     <h1>Plan your perfect trip!</h1>
                     <p></p>
-                    <a href={isLoggedIn ? "/MySchedule" : "/SignUp"} className="cta-btn">Start Your Adventure {/* <HiOutlineArrowRight/> */}</a>
+                    <a href={isLoggedIn ? "/MySchedule" : "/LogIn"} className="cta-btn">Start Your Adventure {/* <HiOutlineArrowRight/> */}</a>
                 </div>
             </section>
             <section className="about-section">

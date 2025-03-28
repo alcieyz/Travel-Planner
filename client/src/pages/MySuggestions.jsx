@@ -4,14 +4,21 @@ import './MySuggestions.css';
 import Llama from '../assets/llama-free.jpg';
 import {useAuth} from "../AuthContext";
 import SideMenu from '../components/SideMenu';
+/* import { FaChevronDown } from 'react-icons/fa'; */
 
 const MySuggestions = () => {
     const {isLoggedIn} = useAuth();
     const [destination, setDestination] = useState('');
-    const [details,setDetails] = useState('');
+    const [details, setDetails] = useState('');
+    const [type, setType] = useState('');
+    const [number, setNumber] = useState('');
     const [suggestions, setSuggestions] = useState(localStorage.getItem('suggestions'));
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -36,6 +43,8 @@ const MySuggestions = () => {
         try {
             const response = await axios.post('http://localhost:5000/api/travel-suggestions', {
                 destination,
+                type,
+                number,
                 details,
               });
               localStorage.setItem('suggestions', response.data.suggestions);
@@ -72,16 +81,24 @@ const MySuggestions = () => {
 
     return (
         <div className="page-container">
-            <SideMenu/>
             <div className="suggestions-content">
                 <div className="page-title">
                     <h1>My Travel Suggestions</h1>
                 </div>
                 {/* <img src={Llama} className="llama" alt="Llama"/> */}
-                <p>Hi, I'm Mr. Llama. I'm here to help!<br></br>Enter any destination for attraction, food, and lodging suggestions!</p>
+                <p>Hi, I'm Lily the Llama. I'm here to help!<br></br>Enter any destination for travel suggestions!</p>
                 <form className='suggestions-form' onSubmit={handleSubmit}>
                     <input className='suggestions-search-bar' type="text" value={destination} onChange={(e) => setDestination(e.target.value)} placeholder="Enter a destination"/>
-                    <input className='suggestions-search-bar' value={details} onChange={(e) => setDetails(e.target.value)} placeholder="Enter any details/ specifications"/>
+                    <select className='suggestions-select-bar' value={type} onChange={(e) => setType(e.target.value)} required>
+                        <option value="" disabled>Select suggestion type</option>
+                        <option value="attraction">Attractions</option>
+                        <option value="restaurant">Restaurants</option>
+                        <option value="lodging">Lodging</option>
+                        <option value=" ">Other (Enter details below)</option>
+                    </select>
+                    {/* <FaChevronDown className="select-icon"/> */}
+                    <input className='suggestions-search-bar' type="number" min="1" max="20" step="1" value={number} onChange={(e) => setNumber(e.target.value)} placeholder="Enter desired number of results (optional, max 20)"/>
+                    <input className='suggestions-search-bar' value={details} onChange={(e) => setDetails(e.target.value)} placeholder="Enter any details/specifications"/>
                     <button type="submit" disabled={loading}>
                     {loading ? 'Loading...' : 'Get Suggestions'}
                     </button>
@@ -89,7 +106,7 @@ const MySuggestions = () => {
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 {suggestions && (
                     <div className="suggestions-container">
-                        <h2>Mr Llama's Suggestions 🦙</h2>
+                        <h2>Lily's Suggestions 🦙</h2>
                         <ul>{renderSuggestions(suggestions)}</ul>
                     </div>
                 )}

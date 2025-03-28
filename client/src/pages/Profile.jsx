@@ -78,7 +78,6 @@ const Profile = () => {
 
     return (
         <div className='dashboard-page-container'>
-            <SideMenu/> 
             <div className='dashboard-content'>
                 <h2>Your Profile</h2>
                 <img src={contextAvatar || '/TP_person_icon.png'} alt="Avatar" className="avatar-img"/>

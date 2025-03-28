@@ -12,14 +12,34 @@ import { HiOutlineArrowRight } from "react-icons/hi";
 
 const Dashboard = () => {
     const {username, contextName} = useAuth();
+
+    const trips = [
+        { id: 1, name: "China 2025", date: "Jun 1-15, 2025", daysLeft: 12, budget: "1,200 / 2,500", image: "china.jpg" },
+        { id: 2, name: "Italy Summer", date: "Jul 10-20, 2025", daysLeft: 42, budget: "800 / 3,000", image: "italy.jpg" },
+    ];
+
+    const tools = [
+        { name: "My Schedule", icon: "📅", desc: "Plan your itinerary day by day" },
+        { name: "My Map", icon: "🗺️", desc: "View destinations on a map" },
+        { name: "My Budget", icon: "💰", desc: "Track expenses and savings" },
+        { name: "My Notes", icon: "📝", desc: "Write travel notes and ideas" },
+        { name: "My Suggestions", icon: "🤖", desc: "Get AI-powered recommendations" },
+    ];
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
     
     return (
         <div className="page-container">
-            <SideMenu/>
-
             <div className="dashboard-content">
                 {(contextName !== null) ? <h1>Welcome to Travel Planner, {contextName}</h1> : <h1>Welcome to Travel Planner, {username}</h1>}
                 <h2>Recommended</h2>
+                <h3>Quick Stats</h3>
+                <p>You have 3 upcoming trips</p>
+                <h3>My Trips</h3>
+
+                
                 <h3>Tools</h3>
                 <div className='tools-grid'> 
                     <div className='tools-item'>
@@ -53,6 +73,7 @@ const Dashboard = () => {
                         <a href="/MySuggestions"><button className='go-btn'>Go <HiOutlineArrowRight/></button></a>
                     </div>
                 </div>
+
                 <Outlet/>
             </div>
         </div>

@@ -14,6 +14,10 @@ const MyNotes = () => {
     const [selectedNote, setSelectedNote] = useState(null);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    useEffect(() => {
         if (isLoggedIn && username) {
             fetchNotes();
         }
@@ -140,7 +144,6 @@ const MyNotes = () => {
 
     return (
         <div className="page-container">
-            <SideMenu/>
             <div className="notes-content">
                 <div className="page-title">
                     <h1>My Notes</h1>

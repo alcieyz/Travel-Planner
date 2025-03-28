@@ -273,9 +273,13 @@ app.post('/MyMap', (req, res) => {
     const query = 'INSERT INTO map_markers (username, lat, lng, name) VALUES (?, ?, ?, ?)';
     db.query(query, [username, lat, lng, name], (err, results) => {
         if (err) {
-            return res.status(500).send('Error saving marker');
+            if (err.code === 'ER_DUP_ENTRY') {
+                return res.status(400).json({error: 'You already have a marker at this location'});
+            }
+            console.error('Database error:', err);
+            return res.status(500).json({error: 'Failed to save marker'});
         }
-        res.send('Marker saved successfully');
+        res.json({message: 'Marker saved successfully'});
     });
 });
 
@@ -488,7 +492,7 @@ app.get('/MyBudget/GetUserBudget', (req, res) => {
 });
 
 app.post('/api/travel-suggestions', async (req, res) => {
-    const {destination, details} = req.body;
+    const {destination, type, number, details} = req.body;
 
     if (!destination) {
         return res.status(400).json({ error: 'Please provide a destination.'});
@@ -499,7 +503,7 @@ app.post('/api/travel-suggestions', async (req, res) => {
             messages: [
                 {
                     role: 'user',
-                    content: `Generate attraction, restaurant, and lodging suggestions for traveling to ${destination}. ${details}`,
+                    content: `Generate top ${number} ${type} suggestions for traveling to ${destination}. ${details}` ,
                 },
             ],
             model: 'llama-3.3-70b-versatile',
@@ -510,7 +514,12 @@ app.post('/api/travel-suggestions', async (req, res) => {
             stop: null,
         });
 
-        const suggestions = chatCompletion.choices[0]?.message?.content;
+        let suggestions = chatCompletion.choices[0]?.message?.content;
+
+        if (chatCompletion.choices[0]?.finish_reason === 'length') {
+            suggestions = 'Oh no! You gave Lily too much to do. Please reduce the desired number of results or the details of your request.'
+        }
+
         res.json({ suggestions });
     } catch (error) {
         console.error('Error fetching travel suggestions:', error);

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute';
@@ -13,10 +13,12 @@ import MySuggestions from './pages/MySuggestions';
 import LogIn from "./pages/LogIn";
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
+import MyTrips from './pages/MyTrips';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 
 import NoPage from "./pages/NoPage";
+import SideMenu from './components/SideMenu';
 
 function App() {
 
@@ -35,6 +37,7 @@ function App() {
       "/LogIn": "Log In - Travel Planner",
       "/SignUp": "Sign Up - Travel Planner",
       "/Dashboard": "Dashboard - Travel Planner",
+      "/MyTrips": "My Trips - Travel Planner",
       "/Profile": "Profile - Travel Planner",
       "/Settings": "Settings - Travel Planner",
     };
@@ -42,25 +45,27 @@ function App() {
     document.title = pageTitles[location.pathname] || "Travel Planner";
   }, [location]);
   
-  return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
-        <Route path="MySchedule" element ={<ProtectedRoute><MySchedule/></ProtectedRoute>} />
-        <Route path="MyMap" element ={<ProtectedRoute><MyMap/></ProtectedRoute>} />
-        <Route path="MyBudget" element ={<ProtectedRoute><MyBudget/></ProtectedRoute>} />
-        <Route path="MyNotes" element ={<ProtectedRoute><MyNotes/></ProtectedRoute>} />
-        <Route path="MySuggestions" element ={<ProtectedRoute><MySuggestions/></ProtectedRoute>} />
-        <Route path="LogIn" element ={<LogIn/>} />
-        <Route path="SignUp" element ={<SignUp/>} />
+return (
+    <Fragment>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="MySchedule" element ={<ProtectedRoute><MySchedule/></ProtectedRoute>} />
+            <Route path="MyMap" element ={<ProtectedRoute><MyMap/></ProtectedRoute>} />
+            <Route path="MyBudget" element ={<ProtectedRoute><MyBudget/></ProtectedRoute>} />
+            <Route path="MyNotes" element ={<ProtectedRoute><MyNotes/></ProtectedRoute>} />
+            <Route path="MySuggestions" element ={<ProtectedRoute><MySuggestions/></ProtectedRoute>} />
+            <Route path="LogIn" element ={<LogIn/>} />
+            <Route path="SignUp" element ={<SignUp/>} />
 
-        <Route path="Dashboard" element ={<ProtectedRoute><Dashboard/></ProtectedRoute>}/>
-        <Route path="Profile" element ={<ProtectedRoute><Profile/></ProtectedRoute>} />
-        <Route path="Settings" element ={<ProtectedRoute><Settings/></ProtectedRoute>} />
-
-        <Route path="*" element={<NoPage />} />
-      </Route>
-    </Routes>
+            <Route path="Dashboard" element ={<ProtectedRoute><Dashboard/></ProtectedRoute>}/>
+            <Route path="Dashboard/MyTrips" element ={<ProtectedRoute><MyTrips/></ProtectedRoute>}/>
+            <Route path="Profile" element ={<ProtectedRoute><Profile/></ProtectedRoute>} />
+            <Route path="Settings" element ={<ProtectedRoute><Settings/></ProtectedRoute>} />
+          </Route>
+          <Route path="*" element={<NoPage />} />
+        </Routes>
+    </Fragment>
   );
 }
 
@@ -78,14 +83,25 @@ export default function Root() {
 //testing more git changes
 
 /* Things to add:
+- working calendar
 - password encryption
 - change username/password
+- use user id instead of username for authentication
+- sign on session
 - about page
 - when note content has a super long word, it extends off the note
 - improve icons
 - delete categories
 - forgot password
 - tier list??
+- ai travel itinerary
+- my map cancel button after marker preview
+- my map preview marker different color markers
+- include budget in suggestions
+- WHY CANT I GET RID OF THE SIDEBAR WHEN GOING BACK TO HOME PAGE
+
+- dashboard trips: 
+  context menu (right click functionality)
 */
 
 function stuff() {

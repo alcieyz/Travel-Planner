@@ -34,7 +34,6 @@ const Settings = () => {
 
     return (
         <div className='dashboard-page-container'>
-            <SideMenu/>
             <div className='dashboard-content'>
                 <h2>Settings</h2>
                 <h3>Theme? light/dark mode, skins</h3>

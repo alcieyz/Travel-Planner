@@ -16,6 +16,10 @@ const MyBudget = () => {
     const [budget, setBudget] = useState(0);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    useEffect(() => {
         if (isLoggedIn && username) {
             fetchEntries();
         }
@@ -196,8 +200,10 @@ const MyBudget = () => {
 
     return (
         <div className="page-container">
-            <SideMenu/>
             <div className="budget-content">
+                <div className="page-header">
+                    <p>Dashboard {'>'} China {'>'} My Budget</p>
+                </div>
                 <div className="page-title">
                     <h1>My Budget</h1>
                 </div>
