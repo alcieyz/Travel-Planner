@@ -49,7 +49,7 @@ body, h1, p, a {
     flex-direction: column;
     z-index: 1000;
     /* transition: width 0.2s ease; */
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 .sidebar.collapsed {
@@ -142,7 +142,7 @@ body, h1, p, a {
     margin: 0;
     flex-grow: 1;
     overflow-y: auto;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 .sidebar-menu li {

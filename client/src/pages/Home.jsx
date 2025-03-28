@@ -20,7 +20,7 @@ const Home = () => {
                 <div className='hero-content'>
                     <h1>Plan your perfect trip!</h1>
                     <p></p>
-                    <a href={isLoggedIn ? "/MySchedule" : "/LogIn"} className="cta-btn">Start Your Adventure {/* <HiOutlineArrowRight/> */}</a>
+                    <a href={isLoggedIn ? "/Dashboard" : "/LogIn"} className="cta-btn">Start Your Adventure {/* <HiOutlineArrowRight/> */}</a>
                 </div>
             </section>
             <section className="about-section">
