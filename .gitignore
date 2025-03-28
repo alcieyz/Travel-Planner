@@ -54,3 +54,18 @@ node_modules/
 #     -> created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 #     -> INDEX username_index (username)
 #     -> );
+
+#mysql> CREATE TABLE trips (
+#    -> id INT AUTO_INCREMENT PRIMARY KEY,
+#    -> username VARCHAR(255) NOT NULL,
+#    -> name VARCHAR(255) NOT NULL,
+#    -> description TEXT,
+#    -> start DATETIME NOT NULL,
+#    -> end DATETIME NOT NULL,
+#    -> created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+#    -> updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+#    -> INDEX username_index (username)
+#    -> );
+
+#mysql> ALTER TABLE trips
+#    -> ADD UNIQUE INDEX uk_username_name (username, name);
