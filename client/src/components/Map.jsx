@@ -19,7 +19,7 @@ L.Icon.Default.mergeOptions({
 });
 
 const Map = () => {
-    const { username, isLoggedIn } = useAuth();
+    const { username, isLoggedIn, currentTrip } = useAuth();
     const [markers, setMarkers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [previewMarker, setPreviewMarker] = useState(null);
@@ -30,11 +30,16 @@ const Map = () => {
         if (isLoggedIn && username) {
             fetchMarkers();
         }
-    }, []);
+    }, [isLoggedIn, username, currentTrip]);
 
     const fetchMarkers = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/MyMap?username=${username}`);
+            if (!currentTrip) {
+                setMarkers([]);
+                return;
+            }
+            
+            const response = await fetch(`http://localhost:5000/MyMap?username=${username}&tripId=${currentTrip.id}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch markers');
             }
@@ -81,6 +86,7 @@ const Map = () => {
                         lat: previewMarker.position[0],
                         lng: previewMarker.position[1],
                         name: previewMarker.name,
+                        trip_id: currentTrip.id,
                     }),
                 });
                 

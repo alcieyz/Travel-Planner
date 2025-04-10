@@ -9,6 +9,11 @@
     
 }
 
+.add-btn {
+    display: flex;
+    justify-content: flex-end;
+}
+
 .notes-content {
     display: flex;
     flex-direction: column;

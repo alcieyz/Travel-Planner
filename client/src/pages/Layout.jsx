@@ -5,13 +5,15 @@ import { HiOutlineMenu, HiOutlineChevronLeft, HiOutlineChevronRight } from "reac
 import './Layout.css';
 
 const Layout = ({children}) => {
-    const {isLoggedIn, username, contextAvatar, logOut} = useAuth();
+    const {isLoggedIn, username, contextAvatar, logOut, currentTrip, setCurrentTrip} = useAuth();
     const [sidebarWidth, setSidebarWidth] = useState(250);
     const [isResizing, setIsResizing] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const sidebarRef = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
+
+    const [trips, setTrips] = useState([]);
 
     const isHomePage = location.pathname === '/';
     const showSidebar = !isHomePage;
@@ -33,11 +35,42 @@ const Layout = ({children}) => {
         }
     };
 
-    /* useEffect(() => {
-        if (!isLoggedIn) {
-            navigate('/LogIn');
+    useEffect(() => {
+        if (currentTrip) {
+          localStorage.setItem('trip', JSON.stringify(currentTrip));
+        } else {
+          localStorage.removeItem('trip'); // Clear if no trip selected
         }
-    }, [isLoggedIn, navigate]); */
+    }, [currentTrip]);
+
+    useEffect(() => {
+        const fetchTrips = async () => {
+          try {
+            const response = await fetch(`http://localhost:5000/MyTrips?username=${username}`);
+            if (!response.ok) throw new Error("Failed to fetch trips");
+            const data = await response.json();
+            setTrips(data);
+            /* if (data.length > 0) {
+              setCurrentTrip(data[0]); // Auto-select first trip
+            } */
+           // Check if stored trip exists in the newly fetched trips
+            const savedTrip = JSON.parse(localStorage.getItem('trip'));
+            if (savedTrip && data.some(trip => trip.id === savedTrip.id)) {
+                setCurrentTrip(savedTrip); // Restore saved selection
+            }
+          } catch (error) {
+            console.error("Error fetching trips:", error);
+            // Optional: Show user-friendly error message
+          }
+        };
+    
+        fetchTrips();
+    }, [username]);
+
+    const confirmTripChange = () => {
+        if (!currentTrip) return true; // Skip confirmation if no trip selected yet
+        return window.confirm("Are you sure you want to change the selected trip?");
+    };
 
     useEffect(() => {
         window.addEventListener('mousemove', resize);
@@ -94,6 +127,36 @@ const Layout = ({children}) => {
                         </div>
                         <div className="header-title">
                             <a href="/" title="Home"><h2>{isCollapsed ? 'TP' : 'Travel Planner'}</h2></a>
+                            {!isCollapsed &&
+                                <select
+                                    value={currentTrip?.id || ""}
+                                    onChange={async (e) => {
+                                        // Store the selected value immediately
+                                        const selectedValue = e.target.value;
+                                        
+                                        // Temporarily show the selected value in the dropdown
+                                        e.target.value = selectedValue;
+                                        
+                                        if (await confirmTripChange()) {
+                                        const selectedTrip = trips.find((trip) => trip.id.toString() === selectedValue);
+                                        setCurrentTrip(selectedTrip || null);
+                                        } else {
+                                        // Revert the visual selection
+                                        e.target.value = currentTrip?.id || "";
+                                        }
+                                    }}
+                                    className="trip-dropdown"
+                                >
+                                    <option value="" disabled hidden>
+                                        Select a trip
+                                    </option>
+                                    {trips.map((trip) => (
+                                        <option key={trip.id} value={trip.id}>
+                                        {trip.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            }
                             {!isCollapsed && <h3>Menu</h3>}
                         </div>
                     </div>
@@ -181,7 +244,7 @@ const Layout = ({children}) => {
                                 onClick={handleLogOut}
                                 title={isCollapsed ? "Log Out" : undefined}
                             >
-                                {isCollapsed ? '🚪' : 'Log Out'}
+                                {!isCollapsed && 'Log Out'}
                             </button>
                         </li>
                     </ul>

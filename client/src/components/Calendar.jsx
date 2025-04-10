@@ -15,7 +15,7 @@ const toMySQLDateTime = (isoString) => {
 };
 
 const Calendar = () => {
-    const { username, isLoggedIn } = useAuth();
+    const { username, isLoggedIn, currentTrip } = useAuth();
     const [events, setEvents] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentEvent, setCurrentEvent] = useState(null);
@@ -30,7 +30,7 @@ const Calendar = () => {
         if (isLoggedIn && username) {
             setIsLoading(true);
             setError(null);
-            fetch(`http://localhost:5000/MySchedule?username=${username}`)
+            fetch(`http://localhost:5000/MySchedule?username=${username}&tripId=${currentTrip.id}`)
                 .then(response => response.json())
                 .then(data => {
                     const formattedEvents = data.map(event => ({
@@ -50,7 +50,7 @@ const Calendar = () => {
                 })
                 .finally(() => setIsLoading(false));
         }
-    }, [isLoggedIn, username]);
+    }, [isLoggedIn, username, currentTrip]);
 
     const handleAddEvent = useCallback((arg) => {
         const clickedDate = arg.date;
@@ -60,6 +60,7 @@ const Calendar = () => {
             start: clickedDate.toISOString(), // Use UTC
             end: new Date(clickedDate.getTime() + 60 * 60 * 1000).toISOString(), // Use UTC
             color: '#FF0000',
+            trip_id: currentTrip.id,
         });
         setIsEditing(false);
         setIsModalOpen(true);

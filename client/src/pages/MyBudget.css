@@ -57,6 +57,28 @@
     outline: none;
 }
 
+.budget-progress-container {
+    margin-top: 20px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.budget-progress-bar {
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 20px;
+    width: 100%;
+    margin-top: 5px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.budget-progress-fill {
+    height: 100%;
+    background-color: #ff69b4;
+    transition: width 0.3s ease-in-out;
+}
+
 .amount-input {
     display: flex;
     justify-content: row;

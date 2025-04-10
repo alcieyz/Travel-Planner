@@ -82,6 +82,9 @@ const MySuggestions = () => {
     return (
         <div className="page-container">
             <div className="suggestions-content">
+                <div className="page-header">
+                    <p><a href="/Dashboard">Dashboard</a> {'>'}  My Suggestions</p>
+                </div>
                 <div className="page-title">
                     <h1>My Travel Suggestions</h1>
                 </div>

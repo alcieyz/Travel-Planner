@@ -25,11 +25,11 @@ html, body {
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: rgb(255, 47, 157);
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: rgb(255, 103, 184);
 }
 
 h1 {

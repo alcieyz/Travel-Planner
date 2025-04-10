@@ -1,10 +1,10 @@
 import {useState, useEffect, Fragment} from "react";
 import './MyBudget.css';
 import {useAuth} from "../AuthContext";
-import SideMenu from '../components/SideMenu';
+import BudgetFormModal from '../components/BudgetFormModal';
 
 const MyBudget = () => {
-    const { username, isLoggedIn } = useAuth();
+    const { username, isLoggedIn, currentTrip } = useAuth();
     const [entriesByCategory, setEntriesByCategory] = useState({});
     const [category, setCategory] = useState("Uncategorized");
     const [customCategory, setCustomCategory] = useState("");
@@ -14,6 +14,7 @@ const MyBudget = () => {
     const [description, setDescription] = useState("");
     const [selectedEntry, setSelectedEntry] = useState(null);
     const [budget, setBudget] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -22,12 +23,14 @@ const MyBudget = () => {
     useEffect(() => {
         if (isLoggedIn && username) {
             fetchEntries();
+            fetchUserCategories();
+            fetchBudget();
         }
-    }, [isLoggedIn, username]);
+    }, [isLoggedIn, username, currentTrip]);
 
     const fetchEntries = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/MyBudget?username=${username}`);
+            const response = await fetch(`http://localhost:5000/MyBudget?username=${username}&tripId=${currentTrip.id}`);
             if (!response.ok) {
                 throw new Error("Failed to fetch entries");
             }
@@ -39,34 +42,25 @@ const MyBudget = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchUserCategories = async () => {
-            try {
-                const response = await fetch(`http://localhost:5000/MyBudget/GetUserCategories?username=${username}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setCategories(data);
-                }
-                else {
-                    console.error('Error fetching categories');
-                }
+    const fetchUserCategories = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/MyBudget/GetUserCategories?username=${username}&tripId=${currentTrip.id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setCategories(data);
             }
-            catch (error) {
-                console.error('Error:', error);
+            else {
+                console.error('Error fetching categories');
             }
-        };
-        fetchUserCategories();
-    }, [username]);
-
-    useEffect(() => {
-        if (isLoggedIn && username) {
-            fetchBudget();
         }
-    }, [isLoggedIn, username]);
+        catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
     const fetchBudget = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/MyBudget/GetUserBudget?username=${username}`);
+            const response = await fetch(`http://localhost:5000/MyBudget/GetUserBudget?tripId=${currentTrip.id}`);
             if (!response.ok) {
                 throw new Error("Failed to fetch total budget");
             }
@@ -84,13 +78,14 @@ const MyBudget = () => {
         setAmount(entry.amount);
         setDescription(entry.description);
         setCategory(entry.category || "Uncategorized");
+        setIsModalOpen(true);
     }
 
     const handleAddEntry = async (event) => {
         event.preventDefault();
 
         try {
-            const newEntry = { title, amount, description, category, username };
+            const newEntry = { title, amount, description, category, username, tripId: currentTrip.id };
             const response = await fetch("http://localhost:5000/MyBudget", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
@@ -101,6 +96,7 @@ const MyBudget = () => {
             }
             fetchEntries(); //Refresh entries
             resetForm();
+            setIsModalOpen(false);
         }
         catch (error) {
             console.error("Error adding entry:", error.message);
@@ -126,6 +122,7 @@ const MyBudget = () => {
             }
             fetchEntries();
             resetForm();
+            setIsModalOpen(false);
         }
         catch (error) {
             console.error("Error updating entry:", error.message);
@@ -168,15 +165,13 @@ const MyBudget = () => {
             const response = await fetch('http://localhost:5000/MyBudget/Budget', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify({budget, username}),
+                body: JSON.stringify({budget, tripId: currentTrip.id}),
             });
 
             if (!response.ok) {
                 const message = await response.text();
                 throw new Error(message);
             }
-
-            const data = await response.json();
 
             //Successful
             alert('Total budget updated successfully!');
@@ -198,82 +193,27 @@ const MyBudget = () => {
         .flat()
         .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
 
+    const progress = ((totalAmount / budget) * 100);
+
+    const openAddEntryModal = () => {
+        resetForm();
+        setIsModalOpen(true);
+    };
+
     return (
         <div className="page-container">
             <div className="budget-content">
                 <div className="page-header">
-                    <p>Dashboard {'>'} China {'>'} My Budget</p>
+                    <p><a href="/Dashboard">Dashboard</a> {'>'} <a href="/MyTrips">{currentTrip.name}</a> {'>'} My Budget</p>
                 </div>
                 <div className="page-title">
                     <h1>My Budget</h1>
                 </div>
-                <form className="budget-form" onSubmit={selectedEntry ? handleUpdateEntry : handleAddEntry}>
-                    <input 
-                        value={title} 
-                        onChange={(event) =>
-                            setTitle(event.target.value)
-                        }
-                        placeholder="Title" required>
-                    </input>
-                    <div className='amount-input'>
-                        <h2>Amount:</h2>
-                        <input 
-                            type="number"
-                            step="0.01"
-                            value={amount} 
-                            onChange={(event) => setAmount(event.target.value) }
-                            onBlur={(event) => setAmount(parseFloat(event.target.value || 0).toFixed(2))}
-                            placeholder="Amount" required>
-                        </input>
-                    </div>
-                    <textarea 
-                        value={description}
-                        onChange={(event) => setDescription(event.target.value)}
-                        placeholder="Description" rows={1}>
-                    </textarea>
-                    
-                    <div className="category-input">
-                        <select className="select-dropdown" value={category} onChange={(event) => setCategory(event.target.value)}>
-                            <option value="Uncategorized">Uncategorized</option>
-                            <option value="Attractions">Attractions</option>
-                            <option value="Food">Food</option>
-                            <option value="Stay">Stay</option>
-                            <option value="Other">Other</option>
-                            {categories.map((category) => (
-                                <option key={category} value={category}>
-                                    {category}
-                                </option>
-                            ))}
-                            {customCategory && <option value={customCategory}>{customCategory}</option>}
-                        </select>
-
-                        <input 
-                            type="text" 
-                            maxLength={80}
-                            placeholder="Add custom category" 
-                            value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} 
-                            onBlur={() => customCategory && setCategory(customCategory)} //Automatically select custom category
-                        />
-                    </div>
-
-                    {selectedEntry ? (
-                        <div className="edit-btns">
-                            <button className='delete-btn' 
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    deleteEntry(event, selectedEntry.id);
-                                }}
-                            >
-                                Delete</button>
-                            <div className="save-cancel">
-                                <button type="submit">Save</button>
-                                <button className="cancel-btn" onClick={resetForm}>Cancel</button>
-                                </div>
-                        </div>
-                    ) : (
-                        <button type="submit">Add Entry</button>
-                    )}
-                </form>
+                <div className="add-btn">
+                    <button className='add-entry-btn' onClick={openAddEntryModal}>
+                        + Add Entry
+                    </button>
+                </div>
 
                 <form className='budget-form' onSubmit={handleBudgetSubmit}>
                     <div className="budget-input">
@@ -289,6 +229,13 @@ const MyBudget = () => {
                         <button type="submit" className="submit">{(budget) ? "Change" : "Add"}&nbsp;Budget</button>
                     </div>
                 </form>
+                <div className="budget-progress-container">
+                    <p>${totalAmount.toFixed(2)} / ${budget} spent</p>
+                    <div className="budget-progress-bar">
+                        <div className='budget-progress-fill' style={{ width: `${progress}%` }}></div>
+                    </div>
+                </div>
+                <br></br>
 
                 <div className="table-container">
                     <table className="entry-table">
@@ -323,11 +270,36 @@ const MyBudget = () => {
                             </tr>
                             <tr>
                                 <td><strong>Amount Remaining</strong></td>
-                                <td><strong>$ {(parseFloat(budget) - totalAmount).toFixed(2)}</strong></td>
+                                <td><strong>${(parseFloat(budget) - totalAmount).toFixed(2)}</strong></td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
+                <BudgetFormModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSubmit={selectedEntry ? handleUpdateEntry : handleAddEntry}
+                    selectedEntry={selectedEntry}
+                    title={title}
+                    setTitle={setTitle}
+                    amount={amount}
+                    setAmount={setAmount}
+                    description={description}
+                    setDescription={setDescription}
+                    category = {category}
+                    setCategory = {setCategory}
+                    categories = {categories}
+                    setCategories = {setCategories}
+                    customCategory={customCategory}
+                    setCustomCategory={setCustomCategory}
+                    onDelete={(e) => {
+                        e.preventDefault(); // Prevent form submission
+                        if (selectedEntry) {
+                            deleteEntry(e, selectedEntry.id);
+                        }
+                        setIsModalOpen(false);
+                        }}
+                />
             </div>
         </div>
     )

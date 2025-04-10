@@ -69,3 +69,4 @@ node_modules/
 
 #mysql> ALTER TABLE trips
 #    -> ADD UNIQUE INDEX uk_username_name (username, name);
+#    UPDATE budget_entries SET trip_id = 4

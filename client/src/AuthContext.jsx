@@ -7,6 +7,11 @@ export const AuthProvider = ({ children }) => {
     const [username, setUsername] = useState(localStorage.getItem('username') || '');
     const [contextName, setContextName] = useState(localStorage.getItem('name'));
     const [contextAvatar, setContextAvatar] = useState(localStorage.getItem('avatar') || '/uploads/TP_person_icon.png')
+    const [currentTrip, setCurrentTrip] = useState(() => {
+            // Check localStorage for saved trip on initial load
+            const savedTrip = localStorage.getItem('trip');
+            return savedTrip ? JSON.parse(savedTrip) : null;
+    });
 
     const logIn = (username, name, avatar) => {
         localStorage.setItem('username', username);
@@ -23,6 +28,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('name');
         localStorage.removeItem('avatar');
         localStorage.removeItem('suggestions');
+        localStorage.removeItem('trip');
         setContextAvatar('/uploads/TP_person_icon.png');
         setIsLoggedIn(false);
     };
@@ -38,7 +44,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return(
-        <AuthContext.Provider value={{isLoggedIn, username, contextName, contextAvatar, logIn, logOut, updateName, updateAvatar}}>
+        <AuthContext.Provider value={{isLoggedIn, username, contextName, contextAvatar, logIn, logOut, updateName, updateAvatar, currentTrip, setCurrentTrip}}>
             {children}
         </AuthContext.Provider>
     );

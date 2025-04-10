@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {useNavigate} from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 import './SignUp.css';
 import user_icon from '../assets/TP_person_icon_small.png'
 import pw_icon from '../assets/TP_pw_icon_small.png'
 
 const SignUp = () => {
-   
+    const {isLoggedIn} = useAuth();
     const [username, setUsername] = useState('');
     const [pw, setPw] = useState('');
     const [showPw, setShowPw] = useState(false);
     const navigate = useNavigate(); //initialize navigate function
+    
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate('/Dashboard');
+        }
+    }, [isLoggedIn]);
 
     //Function to handle form submission
     const handleSubmit = async (e) => {

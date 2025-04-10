@@ -5,6 +5,7 @@ import AboutImage from '../assets/about_image_small.png'
 import Slider from '../components/Slider';
 import { HiOutlineArrowRight } from "react-icons/hi";
 import CatPlane from '../assets/cat_plane.png';
+import NavBar from '../components/NavBar';
 
 const Home = () => {
 
@@ -16,6 +17,7 @@ const Home = () => {
 
     return (
         <div className='home-page'>
+            <NavBar/>
             <section className="hero-section">
                 <div className='hero-content'>
                     <h1>Plan your perfect trip!</h1>

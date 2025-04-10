@@ -1,10 +1,10 @@
 import {useState, useEffect} from "react";
 import './MyNotes.css';
 import {useAuth} from "../AuthContext";
-import SideMenu from '../components/SideMenu';
+import NoteFormModal from '../components/NoteFormModal';
 
 const MyNotes = () => { 
-    const { username, isLoggedIn } = useAuth();
+    const { username, isLoggedIn, currentTrip } = useAuth();
     const [notesByCategory, setNotesByCategory] = useState({});
     const [category, setCategory] = useState("Uncategorized");
     const [customCategory, setCustomCategory] = useState("");
@@ -12,6 +12,7 @@ const MyNotes = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [selectedNote, setSelectedNote] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -20,12 +21,13 @@ const MyNotes = () => {
     useEffect(() => {
         if (isLoggedIn && username) {
             fetchNotes();
+            fetchUserCategories();
         }
-    }, [isLoggedIn, username]);
+    }, [isLoggedIn, username, currentTrip]);
 
     const fetchNotes = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/MyNotes?username=${username}`);
+            const response = await fetch(`http://localhost:5000/MyNotes?username=${username}&tripId=${currentTrip.id}`);
             if (!response.ok) {
                 throw new Error("Failed to fetch notes");
             }
@@ -37,37 +39,35 @@ const MyNotes = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchUserCategories = async () => {
-            try {
-                const response = await fetch(`http://localhost:5000/MyNotes/GetUserCategories?username=${username}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setCategories(data);
-                }
-                else {
-                    console.error('Error fetching categories');
-                }
+    const fetchUserCategories = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/MyNotes/GetUserCategories?username=${username}&tripId=${currentTrip.id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setCategories(data);
             }
-            catch (error) {
-                console.error('Error:', error);
+            else {
+                console.error('Error fetching categories');
             }
-        };
-        fetchUserCategories();
-    }, [username]);
+        }
+        catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
     const handleNoteClick = (note) => {
         setSelectedNote(note);
         setTitle(note.title);
         setContent(note.content);
         setCategory(note.category || "Uncategorized");
+        setIsModalOpen(true);
     }
 
     const handleAddNote = async (event) => {
         event.preventDefault();
 
         try {
-            const newNote = { title, content, category, username };
+            const newNote = { title, content, category, username, tripId: currentTrip.id};
             const response = await fetch("http://localhost:5000/MyNotes", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
@@ -78,6 +78,7 @@ const MyNotes = () => {
             }
             fetchNotes(); //Refresh notes
             resetForm();
+            setIsModalOpen(false);
         }
         catch (error) {
             console.error("Error adding note:", error.message);
@@ -92,7 +93,7 @@ const MyNotes = () => {
         }
 
         try {
-            const updatedNote = {id: selectedNote.id, title, content, category, username };
+            const updatedNote = {id: selectedNote.id, title, content, category, username};
             const response = await fetch("http://localhost:5000/MyNotes", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json"},
@@ -103,6 +104,7 @@ const MyNotes = () => {
             }
             fetchNotes();
             resetForm();
+            setIsModalOpen(false);
         }
         catch (error) {
             console.error("Error updating note:", error.message);
@@ -141,69 +143,25 @@ const MyNotes = () => {
         setSelectedNote(null);
     }
 
+    const openAddNoteModal = () => {
+        resetForm();
+        setIsModalOpen(true);
+    };
 
     return (
         <div className="page-container">
             <div className="notes-content">
+                <div className="page-header">
+                    <p><a href="/Dashboard">Dashboard</a> {'>'} <a href="/MyTrips">{currentTrip.name}</a> {'>'} My Notes</p>
+                </div>
                 <div className="page-title">
                     <h1>My Notes</h1>
                 </div>
-                <form className="notes-form" onSubmit={selectedNote ? handleUpdateNote : handleAddNote}>
-                    <input 
-                        value={title} 
-                        onChange={(event) =>
-                            setTitle(event.target.value)
-                        }
-                        placeholder="Title" required>
-                    </input>
-                    <textarea 
-                        value={content}
-                        onChange={(event) => setContent(event.target.value)}
-                        placeholder="Content" rows={10} required>
-                    </textarea>
-
-                    <div className='category-input'>
-                    <select className="select-dropdown" value={category} onChange={(event) => setCategory(event.target.value)}>
-                        <option value="Uncategorized">Uncategorized</option>
-                        <option value="Attractions">Attractions</option>
-                        <option value="Food">Food</option>
-                        <option value="Stay">Stay</option>
-                        <option value="Other">Other</option>
-                        {categories.map((category) => (
-                            <option key={category} value={category}>
-                                {category}
-                            </option>
-                        ))}
-                        {customCategory && <option value={customCategory}>{customCategory}</option>}
-                    </select>
-
-                    <input 
-                        type="text" 
-                        maxLength={80}
-                        placeholder="Add custom category" 
-                        value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} 
-                        onBlur={() => customCategory && setCategory(customCategory)} //Automatically select custom category
-                    />
-                    </div>
-
-                    {selectedNote ? (
-                        <div className="edit-btns">
-                            <button className='delete-btn' 
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    deleteNote(event, selectedNote.id);
-                                }}
-                            >
-                                Delete</button>
-                            <div className="save-cancel">
-                                <button type="submit">Save</button>
-                                <button type="button" onClick={resetForm}>Cancel</button>
-                            </div>
-                        </div>
-                    ) : (
-                        <button type="submit">Add Note</button>
-                    )}
-                </form>
+                <div className="add-btn">
+                    <button className='add-note-btn' onClick={openAddNoteModal}>
+                        + Add Note
+                    </button>
+                </div>
                 {Object.keys(notesByCategory).map((cat) => (
                     <div key={cat} className="notes-category">
                         <h2>{cat}</h2>
@@ -217,6 +175,29 @@ const MyNotes = () => {
                         </div>
                     </div>
                 ))}
+                <NoteFormModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSubmit={selectedNote ? handleUpdateNote : handleAddNote}
+                    selectedNote={selectedNote}
+                    title={title}
+                    setTitle={setTitle}
+                    content={content}
+                    setContent={setContent}
+                    category = {category}
+                    setCategory = {setCategory}
+                    categories = {categories}
+                    setCategories = {setCategories}
+                    customCategory={customCategory}
+                    setCustomCategory={setCustomCategory}
+                    onDelete={(e) => {
+                        e.preventDefault(); // Prevent form submission
+                        if (selectedNote) {
+                            deleteNote(e, selectedNote.id);
+                        }
+                        setIsModalOpen(false);
+                        }}
+                />
             </div>
         </div>
     )

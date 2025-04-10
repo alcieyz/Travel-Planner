@@ -6,6 +6,7 @@ import SideMenu from '../components/SideMenu';
 import MapBanner from '../assets/mymap_banner.png';
 
 const MyMap = () => {
+    const {currentTrip} = useAuth();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -14,6 +15,9 @@ const MyMap = () => {
     return (
         <div className="page-container">
             <div className='map-content'>
+                <div className="page-header">
+                    <p><a href="/Dashboard">Dashboard</a> {'>'} <a href="/MyTrips">{currentTrip.name}</a> {'>'} My Map</p>
+                </div>
                 {/* <div className="map-banner">
                     <img src={MapBanner} alt='Map Banner'/>
                 </div> */}

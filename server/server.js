@@ -140,6 +140,68 @@ app.delete('/Settings/:username', (req, res) => {
     });
 });
 
+//Get all trips for a specific user
+app.get('/MyTrips', (req, res) => {
+    const {username} = req.query;
+    const query = `SELECT id, name, description, DATE_FORMAT(start, '%Y-%m-%d') as start, DATE_FORMAT(end, '%Y-%m-%d') as end FROM trips WHERE username = ?`;
+
+    db.query(query, [username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error fetching trips');
+        }
+        res.json(results);
+    });
+});
+
+//Add a new trip
+app.post('/MyTrips', (req, res) => {
+    const {name, description, start, end, username} = req.body;
+
+    const query = `INSERT INTO trips (name, description, start, end, username) VALUES (?, ?, ?, ?, ?)`;
+
+    db.query(query, [name, description, start, end, username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error adding trip');
+        }
+
+        res.status(201).json({id: results.insertId});
+    });
+});
+
+//Update existing trip
+app.put('/MyTrips', (req, res) => {
+    const {id, name, description, start, end, username} = req.body;
+
+    const query = 'UPDATE trips SET name = ?, description = ?, start = ?, end = ? WHERE id = ? AND username = ?';
+
+    db.query(query, [name, description, start, end, id, username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error updating trip');
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).send('Trip not found');
+        }
+        res.status(200).json({message: 'Trip updated successfully!'});
+    });
+});
+
+//Delete a trip
+app.delete('/MyTrips/:id', (req, res) => {
+    const tripId = req.params.id; //or const {id} = req.params;, and change query to [id]
+
+    const query = 'DELETE FROM trips WHERE id = ?';
+
+    db.query(query, [tripId], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error deleting trip');
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).send('Trip not found');
+        }
+        res.status(200).json({message: 'Trip deleted successfully'});
+    });
+});
+
 //Profile Name route
 app.post('/Profile/Name', (req, res) => {
     const {name, username} = req.body; 
@@ -199,10 +261,10 @@ app.post('/Profile/Avatar', upload.single('avatar'), (req, res) => {
 
 //Get all events for a specific user
 app.get('/MySchedule', (req, res) => {
-    const {username} = req.query;
-    const query = 'SELECT * FROM calendar_events WHERE username = ?';
+    const {username, tripId} = req.query;
+    const query = 'SELECT * FROM calendar_events WHERE username = ? AND trip_id = ?';
 
-    db.query(query, [username], (err, results) => {
+    db.query(query, [username, tripId], (err, results) => {
         if (err) {
             console.error('Error fetching events:', err);
             return res.status(500).json({ error: 'Failed to fetch events', details: err.message});
@@ -213,8 +275,8 @@ app.get('/MySchedule', (req, res) => {
 
 //Add a new event
 app.post('/MySchedule', (req, res) => {
-    const {username, title, description, start, end, color} = req.body;
-    const query = `INSERT INTO calendar_events (username, title, description, start, end, color) 
+    const {username, title, description, start, end, color, tripId} = req.body;
+    const query = `INSERT INTO calendar_events (username, title, description, start, end, color, trip_id) 
         VALUES (?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
         title = VALUES(title),
@@ -224,7 +286,7 @@ app.post('/MySchedule', (req, res) => {
         color = VALUES(color)
     `;
 
-    db.query(query, [username, title, description, start, end, color], (err, results) => {
+    db.query(query, [username, title, description, start, end, color, tripId], (err, results) => {
         if (err) {
             console.error('Error saving event:', err);
             return res.status(500).json({error: 'Failed to save event', details: err.message});
@@ -257,21 +319,22 @@ app.delete('/MySchedule/:id', (req, res) => {
 });
 
 app.get('/MyMap', (req, res) => {
-    const {username} = req.query;
-    const query = `SELECT id, lat, lng, name FROM map_markers WHERE username = ?`;
+    const {username, tripId} = req.query;
+    const query = `SELECT id, lat, lng, name FROM map_markers WHERE username = ? AND trip_id = ?`;
 
-    db.query(query, [username], (err, results) => {
+    db.query(query, [username, tripId], (err, results) => {
         if (err) {
             return res.status(500).send('Error fetching markers');
         }
+
         res.json(results);
     });
 });
 
 app.post('/MyMap', (req, res) => {
-    const {username, lat, lng, name} = req.body;
-    const query = 'INSERT INTO map_markers (username, lat, lng, name) VALUES (?, ?, ?, ?)';
-    db.query(query, [username, lat, lng, name], (err, results) => {
+    const {username, lat, lng, name, trip_id} = req.body;
+    const query = 'INSERT INTO map_markers (username, lat, lng, name, trip_id) VALUES (?, ?, ?, ?, ?)';
+    db.query(query, [username, lat, lng, name, trip_id], (err, results) => {
         if (err) {
             if (err.code === 'ER_DUP_ENTRY') {
                 return res.status(400).json({error: 'You already have a marker at this location'});
@@ -295,95 +358,12 @@ app.delete('/MyMap/:id', (req, res) => {
     });
 });
 
-//Get all notes for a specific user
-app.get('/MyNotes', (req, res) => {
-    const {username} = req.query;
-    const query = `SELECT id, title, content, category FROM notes WHERE username = ? ORDER BY category ASC, id ASC`;
-
-    db.query(query, [username], (err, results) => {
-        if (err) {
-            return res.status(500).send('Error fetching notes');
-        }
-        const groupedNotes = results.reduce((acc, note) => {
-            if (!acc[note.category]) {
-                acc[note.category] = [];
-            }
-            acc[note.category].push(note);
-            return acc;
-        }, {});
-        res.json(groupedNotes);
-    });
-});
-
-//Get all note categories for a specific user
-app.get('/MyNotes/GetUserCategories', (req, res) => {
-    const {username} = req.query;
-    const query = `SELECT DISTINCT category FROM notes WHERE username = ? AND category != 'Uncategorized' AND category != 'Attractions' AND category != 'Food' AND category != 'Stay' AND category != 'Other'`;
-
-    db.query(query, [username], (err, results) => {
-        if (err) {
-            return res.status(500).send('Error fetching notes');
-        }
-        const categories = results.map((row) => row.category);
-        res.json(categories);
-    });
-});
-
-//Add a new note
-app.post('/MyNotes', (req, res) => {
-    const {title, content, username, category = 'Uncategorized'} = req.body;
-
-    const query = `INSERT INTO notes (title, content, username, category) VALUES (?, ?, ?, ?)`;
-
-    db.query(query, [title, content, username, category], (err, results) => {
-        if (err) {
-            return res.status(500).send('Error adding note');
-        }
-
-        res.status(201).json({id: results.insertId});
-    });
-});
-
-//Update existing note
-app.put('/MyNotes', (req, res) => {
-    const {id, title, content, username, category} = req.body;
-
-    const query = 'UPDATE notes SET title = ?, content = ?, category = ? WHERE id = ? AND username = ?';
-
-    db.query(query, [title, content, category, id, username], (err, results) => {
-        if (err) {
-            return res.status(500).send('Error updating note');
-        }
-        if (results.affectedRows === 0) {
-            return res.status(404).send('Note not found');
-        }
-        res.status(200).json({message: 'Note updated successfully!'});
-    });
-});
-
-//Delete a note
-app.delete('/MyNotes/:id', (req, res) => {
-    const noteId = req.params.id; //or const {id} = req.params;, and change query to [id]
-
-    const query = 'DELETE FROM notes WHERE id = ?';
-
-    db.query(query, [noteId], (err, results) => {
-        if (err) {
-            return res.status(500).send('Error deleting note');
-        }
-        if (results.affectedRows === 0) {
-            return res.status(404).send('Note not found');
-        }
-        res.status(200).json({message: 'Note deleted successfully'});
-    });
-});
-
 //Get all budget entries for a specific user
 app.get('/MyBudget', (req, res) => {
-    const {username} = req.query;
-    const query = `SELECT id, title, amount, description, category FROM budget_entries WHERE username = ? ORDER BY category ASC, id ASC`;
+    const {username, tripId} = req.query;
+    const query = `SELECT id, title, amount, description, category FROM budget_entries WHERE username = ? AND trip_id = ? ORDER BY category ASC, id ASC`;
 
-    db.query(query, [username], (err, results) => {
+    db.query(query, [username, tripId], (err, results) => {
         if (err) {
             return res.status(500).send('Error fetching budget entries');
         }
@@ -400,10 +380,10 @@ app.get('/MyBudget', (req, res) => {
 
 //Get all budget entry categories for a specific user
 app.get('/MyBudget/GetUserCategories', (req, res) => {
-    const {username} = req.query;
-    const query = `SELECT DISTINCT category FROM budget_entries WHERE username = ? AND category != 'Uncategorized' AND category != 'Attractions' AND category != 'Food' AND category != 'Stay' AND category != 'Other'`;
+    const {username, tripId} = req.query;
+    const query = `SELECT DISTINCT category FROM budget_entries WHERE username = ? AND trip_id = ? AND category != 'Uncategorized' AND category != 'Attractions' AND category != 'Food' AND category != 'Stay' AND category != 'Other'`;
 
-    db.query(query, [username], (err, results) => {
+    db.query(query, [username, tripId], (err, results) => {
         if (err) {
             return res.status(500).send('Error fetching notes');
         }
@@ -414,11 +394,11 @@ app.get('/MyBudget/GetUserCategories', (req, res) => {
 
 //Add a new budget entry
 app.post('/MyBudget', (req, res) => {
-    const {title, amount, description, username, category = 'Uncategorized'} = req.body;
+    const {title, amount, description, username, category = 'Uncategorized', tripId} = req.body;
 
-    const query = `INSERT INTO budget_entries (title, amount, description, username, category) VALUES (?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO budget_entries (title, amount, description, username, category, trip_id) VALUES (?, ?, ?, ?, ?, ?)`;
 
-    db.query(query, [title, amount, description, username, category], (err, results) => {
+    db.query(query, [title, amount, description, username, category, tripId], (err, results) => {
         if (err) {
             return res.status(500).send('Error adding entry');
         }
@@ -462,11 +442,11 @@ app.delete('/MyBudget/:id', (req, res) => {
 });
 
 app.post('/MyBudget/Budget', (req, res) => {
-    const {budget, username} = req.body;
+    const {budget, tripId} = req.body;
 
-    const query = 'UPDATE users SET budget = ? WHERE username = ?';
+    const query = 'UPDATE trips SET budget = ? WHERE id = ?';
 
-    db.query(query, [budget, username], (err, results) => {
+    db.query(query, [budget, tripId], (err, results) => {
         if (err) {
             return res.status(500).send('Error updating total budget');
         }
@@ -479,15 +459,98 @@ app.post('/MyBudget/Budget', (req, res) => {
 });
 
 app.get('/MyBudget/GetUserBudget', (req, res) => {
-    const {username} = req.query;
-    const query = 'SELECT budget FROM users WHERE username = ?';
+    const {tripId} = req.query;
+    const query = 'SELECT budget FROM trips WHERE id = ?';
 
-    db.query(query, [username], (err, results) => {
+    db.query(query, [tripId], (err, results) => {
         if (err) {
             return res.status(500).send('Error fetching total budget');
         }
         const budget = results[0].budget;
         res.json({budget});
+    });
+});
+
+//Get all notes for a specific user
+app.get('/MyNotes', (req, res) => {
+    const {username, tripId} = req.query;
+    const query = `SELECT id, title, content, category FROM notes WHERE username = ? AND trip_id = ? ORDER BY category ASC, id ASC`;
+
+    db.query(query, [username, tripId], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error fetching notes');
+        }
+        const groupedNotes = results.reduce((acc, note) => {
+            if (!acc[note.category]) {
+                acc[note.category] = [];
+            }
+            acc[note.category].push(note);
+            return acc;
+        }, {});
+        res.json(groupedNotes);
+    });
+});
+
+//Get all note categories for a specific user
+app.get('/MyNotes/GetUserCategories', (req, res) => {
+    const {username, tripId} = req.query;
+    const query = `SELECT DISTINCT category FROM notes WHERE username = ? AND trip_id = ? AND category != 'Uncategorized' AND category != 'Attractions' AND category != 'Food' AND category != 'Stay' AND category != 'Other'`;
+
+    db.query(query, [username, tripId], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error fetching notes');
+        }
+        const categories = results.map((row) => row.category);
+        res.json(categories);
+    });
+});
+
+//Add a new note
+app.post('/MyNotes', (req, res) => {
+    const {title, content, username, category = 'Uncategorized', tripId} = req.body;
+
+    const query = `INSERT INTO notes (title, content, username, category, trip_id) VALUES (?, ?, ?, ?, ?)`;
+
+    db.query(query, [title, content, username, category, tripId], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error adding note');
+        }
+
+        res.status(201).json({id: results.insertId});
+    });
+});
+
+//Update existing note
+app.put('/MyNotes', (req, res) => {
+    const {id, title, content, username, category} = req.body;
+
+    const query = 'UPDATE notes SET title = ?, content = ?, category = ? WHERE id = ? AND username = ?';
+
+    db.query(query, [title, content, category, id, username], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error updating note');
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).send('Note not found');
+        }
+        res.status(200).json({message: 'Note updated successfully!'});
+    });
+});
+
+//Delete a note
+app.delete('/MyNotes/:id', (req, res) => {
+    const noteId = req.params.id; //or const {id} = req.params;, and change query to [id]
+
+    const query = 'DELETE FROM notes WHERE id = ?';
+
+    db.query(query, [noteId], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error deleting note');
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).send('Note not found');
+        }
+        res.status(200).json({message: 'Note deleted successfully'});
     });
 });
 

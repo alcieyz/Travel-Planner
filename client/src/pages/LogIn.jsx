@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import './LogIn.css';
@@ -11,7 +11,13 @@ const LogIn = () => {
     const [pw, setPw] = useState('');
     const [showPw, setShowPw] = useState(false);
     const navigate = useNavigate(); //initialize navigate function
-    const {logIn} = useAuth();
+    const {isLoggedIn, logIn} = useAuth();
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate('/Dashboard');
+        }
+    }, [isLoggedIn]);
 
     //Function to handle form submission
     const handleSubmit = async (e) => {

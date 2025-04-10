@@ -100,6 +100,7 @@ export default function Root() {
 - horz nav bar/menu on home page similar to notion
 - add spending progress bar to budget
 - home hero background fit to smaller screens
+- add form modal for every other tool
 
 - dashboard trips: 
   context menu (right click functionality)

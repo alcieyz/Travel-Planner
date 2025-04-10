@@ -138,3 +138,12 @@ transform: translateY(-4px);
     width: 100%;
     margin-bottom: 20px;
 }
+
+.progress-container {
+    margin: 20px 0px;
+    height: 10px;
+    border: none;
+    border-radius: 10px;
+    width: 100%;
+    background: rgb(185, 185, 185);
+}

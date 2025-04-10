@@ -35,6 +35,9 @@ const Settings = () => {
     return (
         <div className='dashboard-page-container'>
             <div className='dashboard-content'>
+                <div className="page-header">
+                    <p><a href="/Dashboard">Dashboard</a> {'>'} Settings</p>
+                </div>
                 <h2>Settings</h2>
                 <h3>Theme? light/dark mode, skins</h3>
                 <button className="delete-acc-btn" onClick={(e) => handleDeleteAccount(e, username)}>Delete Account</button>
