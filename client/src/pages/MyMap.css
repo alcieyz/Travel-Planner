@@ -16,6 +16,13 @@
     width: 100%;
 } */
 
+.map-page-header {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 1200px;
+}
+
 .map-content {
     display: flex;
     flex-direction: column;

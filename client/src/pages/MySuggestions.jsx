@@ -3,7 +3,6 @@ import axios from 'axios';
 import './MySuggestions.css';
 import Llama from '../assets/llama-free.jpg';
 import {useAuth} from "../AuthContext";
-import SideMenu from '../components/SideMenu';
 /* import { FaChevronDown } from 'react-icons/fa'; */
 
 const MySuggestions = () => {

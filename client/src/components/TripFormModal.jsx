@@ -30,17 +30,6 @@ const TripFormModal = ({
         }
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        
-        // Validate dates
-        if (start && end && new Date(end) < new Date(start)) {
-            setError('End date cannot be before start date');
-            return;
-        }
-        
-        onSubmit(e); // Proceed with original submit if valid
-    };
     if (!isOpen) return null;
 
     return (

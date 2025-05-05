@@ -269,7 +269,12 @@ app.get('/MySchedule', (req, res) => {
             console.error('Error fetching events:', err);
             return res.status(500).json({ error: 'Failed to fetch events', details: err.message});
         }
-        res.json(results);
+        const formattedResults = results.map(event => ({
+            ...event,
+            start: event.start,
+            end: event.end
+        }));
+        res.json(formattedResults);
     });
 });
 
@@ -277,24 +282,25 @@ app.get('/MySchedule', (req, res) => {
 app.post('/MySchedule', (req, res) => {
     const {username, title, description, start, end, color, tripId} = req.body;
     const query = `INSERT INTO calendar_events (username, title, description, start, end, color, trip_id) 
-        VALUES (?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE
+        VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        /* ON DUPLICATE KEY UPDATE
         title = VALUES(title),
         description = VALUES(description),
         start = VALUES(start),
         end = VALUES(end),
         color = VALUES(color)
-    `;
+    `; */
 
     db.query(query, [username, title, description, start, end, color, tripId], (err, results) => {
         if (err) {
             console.error('Error saving event:', err);
             return res.status(500).json({error: 'Failed to save event', details: err.message});
         }
-        res.json({id: results.insertId, ...req.body });
+        res.json({id: results.insertId, username, title, description, start, end, color, tripId});
     });
 });
 
+//Update calendar_events;
 app.put('/MySchedule/:id', (req, res) => {
     const { id } = req.params;
     const { title, description, start, end, color } = req.body;
@@ -305,7 +311,7 @@ app.put('/MySchedule/:id', (req, res) => {
     `;
     db.query(query, [title, description, start, end, color, id], (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.json({ id, ...req.body });
+        res.json({ id, title, description, start, end, color});
     });
 });
 
@@ -314,7 +320,7 @@ app.delete('/MySchedule/:id', (req, res) => {
     const query = 'DELETE FROM calendar_events WHERE id = ?';
     db.query(query, [id], (err, results) => {
         if (err) return res.status(500).json({error: err.message});
-        res.json({message: 'Event deleted successfully'});
+        res.json({message: 'Event deleted successfully', id:id});
     });
 });
 

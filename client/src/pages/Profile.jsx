@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {useAuth} from '../AuthContext';
 import './Profile.css';
-import SideMenu from '../components/SideMenu';
 
 const Profile = () => {
     const {username, contextName, updateName, contextAvatar, updateAvatar} = useAuth();
@@ -77,31 +76,31 @@ const Profile = () => {
     };
 
     return (
-        <div className='dashboard-page-container'>
+        <div className='page-container'>
             <div className='dashboard-content'>
                 <div className="page-header">
                     <p><a href="/Dashboard">Dashboard</a> {'>'} Profile</p>
                 </div>
                 <h2>Your Profile</h2>
                 <img src={contextAvatar || '/TP_person_icon.png'} alt="Avatar" className="avatar-img"/>
-
-                {/* <h3>Sorry youre gonna have to crop the iamge yourself if you want a circular profile.</h3>
-                <h3>Oh and if youll do me a favor and not upload any viruses thatd be much appreciated🤗</h3> */}
+            
 
                 <form onSubmit={handleAvatarSubmit}>
                     <div>
                         <div>
-                            <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])}/>
+                            <input className='suggestions-search-bar' type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])}/>
+                            &nbsp;
                             <button type="submit" className="submit">{(contextAvatar !== '/uploads/TP_person_icon.png') ? "Change" : "Add"}&nbsp;Avatar</button>
                         </div>
                     </div>
                 </form>
 
-                {contextName && <h3>Hi, {contextName}</h3>}
+                {contextName && <h3>Hi, {contextName}!</h3>}
                 <form onSubmit={handleNameSubmit}>
                     <div>
                         <div>
-                            <input type="text" placeholder={(contextName) ? contextName : "Name"} value={name || ''} onChange={(e) => setName(e.target.value)}/>
+                            <input className='suggestions-search-bar' type="text" placeholder={(contextName) ? contextName : "Name"} value={name || ''} onChange={(e) => setName(e.target.value)}/>
+                            &nbsp;
                             <button type="submit" className="submit">{(contextName) ? "Change" : "Add"}&nbsp;Name</button>
                         </div>
                     </div>

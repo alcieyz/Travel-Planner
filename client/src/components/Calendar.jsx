@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -7,79 +7,77 @@ import './Calendar.css';
 import { useAuth } from '../AuthContext';
 import EventFormModal from './EventFormModal';
 
-// Utility function to convert ISO 8601 to MySQL datetime format
-const toMySQLDateTime = (isoString) => {
-    if (!isoString) return null;
-    const date = new Date(isoString);
-    return date.toISOString().slice(0, 19).replace('T', ' ');
-};
-
-const Calendar = () => {
-    const { username, isLoggedIn, currentTrip } = useAuth();
+export default function Calendar({ username, tripId }) {
+    /* const { username, isLoggedIn, currentTrip } = useAuth(); */
     const [events, setEvents] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentEvent, setCurrentEvent] = useState(null);
-    const [isEditing, setIsEditing] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [selectedEvent, setSelectedEvent] = useState(null);
 
-    const fullCalendarRef = useRef(null);
+    // Form state
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [start, setStart] = useState('');
+    const [end, setEnd] = useState('');
+    const [color, setColor] = useState('#3788d8');
 
-    // Fetch events when component mounts or username changes
-    useEffect(() => {
-        if (isLoggedIn && username) {
-            setIsLoading(true);
-            setError(null);
-            fetch(`http://localhost:5000/MySchedule?username=${username}&tripId=${currentTrip.id}`)
-                .then(response => response.json())
-                .then(data => {
-                    const formattedEvents = data.map(event => ({
-                        id: event.id,
-                        title: event.title,
-                        description: event.description,
-                        start: event.start, // Backend should return UTC dates
-                        end: event.end || null,
-                        color: event.color,
-                        extendedProps: { description: event.description },
-                    }));
-                    setEvents(formattedEvents);
-                })
-                .catch(error => {
-                    console.error('Error fetching events:', error);
-                    setError('Failed to fetch events. Please try again.');
-                })
-                .finally(() => setIsLoading(false));
+    const calendarRef = useRef(null);
+
+    // Fetch events from the server
+    const fetchEvents = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/MySchedule?username=${username}&tripId=${tripId}`);
+            const data = await response.json();
+            setEvents(data);
+        } catch (error) {
+            console.error('Error fetching events:', error);
         }
-    }, [isLoggedIn, username, currentTrip]);
+    };
 
-    const handleAddEvent = useCallback((arg) => {
+    useEffect(() => {
+        fetchEvents();
+    }, [username, tripId]);
+
+    // Handle date click (adding new event)
+    const handleDateClick = (arg) => {
         const clickedDate = arg.date;
-        setCurrentEvent({
-            title: '',
-            description: '',
-            start: clickedDate.toISOString(), // Use UTC
-            end: new Date(clickedDate.getTime() + 60 * 60 * 1000).toISOString(), // Use UTC
-            color: '#FF0000',
-            trip_id: currentTrip.id,
-        });
-        setIsEditing(false);
-        setIsModalOpen(true);
-    }, []);
+        const endDate = new Date(clickedDate);
+        endDate.setHours(endDate.getHours() + 1);
 
-    const handleEventClick = useCallback((info) => {
-        setCurrentEvent({
-            id: info.event.id,
-            title: info.event.title,
-            description: info.event.extendedProps.description || '',
-            start: info.event.start.toISOString(), // Use UTC
-            end: info.event.end ? info.event.end.toISOString() : '',
-            color: info.event.backgroundColor || '#FF0000',
-        });
-        setIsEditing(true);
+        const formatLocalDateTime = (date) => {
+            return [
+                date.getFullYear(),
+                (date.getMonth() + 1).toString().padStart(2, '0'),
+                date.getDate().toString().padStart(2, '0')
+            ].join('-') + 'T' + [
+                date.getHours().toString().padStart(2, '0'),
+                date.getMinutes().toString().padStart(2, '0')
+            ].join(':');
+        };
+        
+        setSelectedEvent(null);
+        setTitle('');
+        setDescription('');
+        setStart(formatLocalDateTime(clickedDate));
+        setEnd(formatLocalDateTime(endDate)); 
+        setColor('#ffa6e3');
         setIsModalOpen(true);
-    }, []);
+    };
 
-    const handleEventDropOrResize = useCallback((info) => {
+    // Handle event click (view/edit existing event)
+    const handleEventClick = (info) => {
+        const startStr = info.event.startStr.slice(0, 16); // Remove timezone info
+        const endStr = info.event.endStr ? info.event.endStr.slice(0, 16) : startStr;
+
+        setSelectedEvent(info.event);
+        setTitle(info.event.title);
+        setDescription(info.event.extendedProps.description || '');
+        setStart(startStr);
+        setEnd(endStr);
+        setColor(info.event.backgroundColor || '#3788d8');
+        setIsModalOpen(true);
+    };
+
+    /* const handleEventDropOrResize = useCallback((info) => {
         const { event } = info;
         const updatedEvent = {
             id: event.id,
@@ -105,93 +103,100 @@ const Calendar = () => {
                 console.error('Error updating event:', error);
                 info.revert();
             });
-    }, []);
+    }, []); */
 
-    const updateEventInBackend = useCallback(async (eventData) => {
-        const method = eventData.id ? 'PUT' : 'POST';
-        const url = eventData.id
-            ? `http://localhost:5000/MySchedule/${eventData.id}`
-            : 'http://localhost:5000/MySchedule';
-
-        const response = await fetch(url, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, ...eventData }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to update event.');
-        }
-
-        const updatedEvent = await response.json();
-
-        return {
-            id: updatedEvent.id,
-            title: updatedEvent.title,
-            description: updatedEvent.description,
-            start: updatedEvent.start, // Ensure this is in UTC
-            end: updatedEvent.end || null, // Ensure this is in UTC
-            color: updatedEvent.color,
-            extendedProps: { description: updatedEvent.description },
-        };
-    }, [username]);
-
-    const handleFormSubmit = useCallback((eventData) => {
-        const formattedEventData = {
-            ...eventData,
-            start: toMySQLDateTime(eventData.start), // Convert to MySQL format
-            end: toMySQLDateTime(eventData.end), // Convert to MySQL format
+    // Save event (both create and update)
+    const handleSaveEvent = async () => {
+        const toLocalISO = (dateStr) => {
+            const date = new Date(dateStr);
+            return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}T${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
         };
 
-        updateEventInBackend(formattedEventData)
-            .then(updatedEvent => {
-                setEvents(prevEvents => {
-                    if (isEditing) {
-                        // Replace the old event with the updated event
-                        return prevEvents.map(evt =>
-                            evt.id === updatedEvent.id
-                                ? { ...updatedEvent, extendedProps: { description: updatedEvent.description } }
-                                : evt
-                        );
-                    } else {
-                        // Add the new event
-                        return [...prevEvents, { ...updatedEvent, extendedProps: { description: updatedEvent.description } }];
-                    }
-                });
-                fullCalendarRef.current.getApi().refetchEvents();
-                setIsModalOpen(false);
-                setCurrentEvent(null);
-            })
-            .catch(error => {
-                console.error('Error saving event:', error);
-                setError('Failed to save event. Please try again.');
-            });
-    }, [isEditing, updateEventInBackend]);
+        const eventData = {
+            username,
+            title,
+            description,
+            start: toLocalISO(start),
+            end: toLocalISO(end),
+            color,
+            tripId
+        };
 
-    const handleDeleteEvent = useCallback(async (eventId) => {
         try {
-            const response = await fetch(`http://localhost:5000/MySchedule/${eventId}`, {
-                method: 'DELETE',
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to delete event');
+            let response;
+            if (selectedEvent) {
+                // Update existing event
+                response = await fetch(`http://localhost:5000/MySchedule/${selectedEvent.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(eventData),
+                });
+            } else {
+                // Create new event
+                response = await fetch('http://localhost:5000/MySchedule', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(eventData),
+                });
             }
 
-            setEvents(prevEvents => prevEvents.filter(evt => evt.id !== eventId));
-            fullCalendarRef.current.getApi().refetchEvents();
+            const data = await response.json();
+            fetchEvents(); // Refresh events
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error('Error saving event:', error);
+        }
+    };
+
+    /* const handleEventChange = async (changedEvent) => {
+        try {
+          const response = await fetch(`http://localhost:5000/MySchedule/${changedEvent.event.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              start: changedEvent.event.start,
+              end: changedEvent.event.end,
+            })
+          });
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Update failed');
+          }
+        } catch (error) {
+          console.error('Error updating event:', error);
+          // Revert the change visually
+          changedEvent.revert();
+        }
+      }; */
+
+    // Delete event
+    const handleDeleteEvent = async () => {
+        if (!selectedEvent) return;
+
+        const confirmDeleteNote = window.confirm("Are you sure you want to delete this note?");
+        if (!confirmDeleteNote) {
+            return;
+        }
+
+        try {
+            await fetch(`http://localhost:5000/MySchedule/${selectedEvent.id}`, {
+                method: 'DELETE',
+            });
+            fetchEvents(); // Refresh events
+            setIsModalOpen(false);
         } catch (error) {
             console.error('Error deleting event:', error);
-            setError('Failed to delete event. Please try again.');
         }
-    }, []);
+    };
 
     return (
         <div>
-            {isLoading && <p>Loading...</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
             <FullCalendar
-                ref={fullCalendarRef}
+                ref={calendarRef}
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                 initialView="timeGridWeek"
                 headerToolbar={{
@@ -200,34 +205,70 @@ const Calendar = () => {
                     right: 'dayGridMonth,timeGridWeek,timeGridDay',
                 }}
                 events={events}
-                dateClick={handleAddEvent}
                 editable={true}
-                eventDrop={handleEventDropOrResize}
-                eventResize={handleEventDropOrResize}
-                eventClick={handleEventClick}
                 selectable={true}
-                timeZone="UTC" // Ensure FullCalendar uses UTC
-                eventContent={(eventInfo) => (
+                selectMirror={true}
+                dayMaxEvents={true}
+                dateClick={handleDateClick}
+                eventClick={handleEventClick}
+                eventContent={renderEventContent}
+
+                timeZone='local' 
+                eventTimeFormat={{
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                    meridiem: false
+                }}
+
+                
+                /* eventResizeFromStart={true} */
+                /* eventResize={handleEventChange}
+                eventDrop={handleEventChange} */
+                
+                /* eventContent={(eventInfo) => (
                     <div>
                         <strong>{eventInfo.event.title}</strong>
                         <p>{eventInfo.event.extendedProps.description}</p>
                     </div>
-                )}
+                )} */
             />
 
+            {/* Event Modal */}
             <EventFormModal
-                isOpen={isModalOpen}
-                onClose={() => {
-                    setIsModalOpen(false);
-                    setCurrentEvent(null);
-                }}
-                onSubmit={handleFormSubmit}
-                event={currentEvent}
-                isEditing={isEditing}
-                onDelete={() => handleDeleteEvent(currentEvent.id)}
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSubmit={handleSaveEvent}
+                    selectedEvent={selectedEvent}
+                    title={title}
+                    setTitle={setTitle}
+                    description={description}
+                    setDescription={setDescription}
+                    start={start}
+                    setStart={setStart}
+                    end={end}
+                    setEnd={setEnd}
+                    color = {color}
+                    setColor = {setColor}
+                    onDelete={(e) => {
+                        e.preventDefault(); // Prevent form submission
+                        if (selectedEvent) {
+                            handleDeleteEvent(e, selectedEvent.id);
+                        }
+                        setIsModalOpen(false);
+                        }}
             />
         </div>
     );
-};
+}
 
-export default Calendar;
+// Custom event rendering
+function renderEventContent(eventInfo) {
+    return (
+        <>
+            <b>{eventInfo.timeText}</b>
+            <br></br>
+            <i>{eventInfo.event.title}</i>
+        </>
+    );
+}

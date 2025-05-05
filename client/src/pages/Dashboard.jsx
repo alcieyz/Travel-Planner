@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {Outlet} from 'react-router-dom';
 import {useAuth} from '../AuthContext';
 import './Dashboard.css';
-import SideMenu from '../components/SideMenu';
 import ScheduleImage from '../assets/schedule_image.png';
 import MapImage from '../assets/map_image.png';
 import BudgetImage from '../assets/budget_image.png';

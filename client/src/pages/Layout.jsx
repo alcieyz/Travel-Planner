@@ -50,10 +50,6 @@ const Layout = ({children}) => {
             if (!response.ok) throw new Error("Failed to fetch trips");
             const data = await response.json();
             setTrips(data);
-            /* if (data.length > 0) {
-              setCurrentTrip(data[0]); // Auto-select first trip
-            } */
-           // Check if stored trip exists in the newly fetched trips
             const savedTrip = JSON.parse(localStorage.getItem('trip'));
             if (savedTrip && data.some(trip => trip.id === savedTrip.id)) {
                 setCurrentTrip(savedTrip); // Restore saved selection

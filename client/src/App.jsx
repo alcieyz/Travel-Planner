@@ -18,7 +18,6 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 
 import NoPage from "./pages/NoPage";
-import SideMenu from './components/SideMenu';
 
 function App() {
 
@@ -83,7 +82,6 @@ export default function Root() {
 //testing more git changes
 
 /* Things to add:
-- working calendar
 - password encryption
 - change username/password
 - use user id instead of username for authentication
@@ -97,10 +95,9 @@ export default function Root() {
 - my map cancel button after marker preview
 - my map preview marker different color markers
 - include budget in suggestions
-- horz nav bar/menu on home page similar to notion
-- add spending progress bar to budget
 - home hero background fit to smaller screens
-- add form modal for every other tool
+- highlight all trip days in calendar
+- optimize calendar color/qol including show daytime times by default, show event details, etc.
 
 - dashboard trips: 
   context menu (right click functionality)

@@ -39,7 +39,7 @@
     border-radius: 5px;
     height: 45px;
     width: 100%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
 }
 
@@ -49,6 +49,7 @@
     width: 100%;
     border-radius: 5px;
     box-sizing: border-box;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .notes-form select {
