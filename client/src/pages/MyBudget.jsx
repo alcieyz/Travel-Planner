@@ -204,77 +204,85 @@ const MyBudget = () => {
         <div className="page-container">
             <div className="budget-content">
                 <div className="page-header">
-                    <p><a href="/Dashboard">Dashboard</a> {'>'} <a href="/MyTrips">{currentTrip.name}</a> {'>'} My Budget</p>
+                    <p><a href="/Dashboard">Dashboard</a> {'>'} <a href="/MyTrips">{currentTrip ? `${currentTrip.name} ${'>'}`: ""}</a> {'>'} My Budget</p>
                 </div>
                 <div className="page-title">
                     <h1>My Budget</h1>
                 </div>
-                <div className="add-btn">
-                    <button className='add-entry-btn' onClick={openAddEntryModal}>
-                        + Add Entry
-                    </button>
-                </div>
+                {currentTrip ? (
 
-                <form className='budget-form' onSubmit={handleBudgetSubmit}>
-                    <div className="budget-input">
-                        <h2>Budget:</h2>
-                        <input 
-                            type="number"
-                            step="0.01"
-                            value={budget} 
-                            onChange={(event) => setBudget(event.target.value) }
-                            onBlur={(event) => setBudget(parseFloat(event.target.value || 0).toFixed(2))}
-                            placeholder="Total Budget" required>
-                        </input>
-                        <button type="submit" className="submit">{(budget) ? "Change" : "Add"}&nbsp;Budget</button>
+                
+                <div>
+                    <div className="add-btn">
+                        <button className='add-entry-btn' onClick={openAddEntryModal}>
+                            + Add Entry
+                        </button>
                     </div>
-                </form>
-                <div className="budget-progress-container">
-                    <p>${totalAmount.toFixed(2)} / ${budget} spent</p>
-                    <div className="budget-progress-bar">
-                        <div className='budget-progress-fill' style={{ width: `${progress}%` }}></div>
-                    </div>
-                </div>
-                <br></br>
 
-                <div className="table-container">
-                    <table className="entry-table">
-                        <thead>
-                            <tr>
-                                <th>Details</th>
-                                <th>Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Object.keys(entriesByCategory).map((cat) => (
-                                <Fragment key={cat}>
-                                    <tr className="category-row">
-                                        <td colSpan="2">{cat}</td>
-                                    </tr>
-                                    {entriesByCategory[cat].map((entry) => (
-                                        <tr key={entry.id} className={`entry-item ${selectedEntry === entry ? "selected" : ""}`} onClick={() => handleEntryClick(entry)}>
-                                            <td>
-                                                <span className="entry-title">{entry.title}</span>
-                                                <span className="entry-description">{entry.description}</span>
-                                            </td>
-                                            <td>${entry.amount}</td>
+                    <form className='budget-form' onSubmit={handleBudgetSubmit}>
+                        <div className="budget-input">
+                            <h2>Budget:</h2>
+                            <input 
+                                type="number"
+                                step="0.01"
+                                value={budget} 
+                                onChange={(event) => setBudget(event.target.value) }
+                                onBlur={(event) => setBudget(parseFloat(event.target.value || 0).toFixed(2))}
+                                placeholder="Total Budget" required>
+                            </input>
+                            <button type="submit" className="submit">{(budget) ? "Change" : "Add"}&nbsp;Budget</button>
+                        </div>
+                    </form>
+                    <div className="budget-progress-container">
+                        <p>${totalAmount.toFixed(2)} / ${budget} spent</p>
+                        <div className="budget-progress-bar">
+                            <div className='budget-progress-fill' style={{ width: `${progress}%` }}></div>
+                        </div>
+                    </div>
+                    <br></br>
+
+                    <div className="table-container">
+                        <table className="entry-table">
+                            <thead>
+                                <tr>
+                                    <th>Details</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {Object.keys(entriesByCategory).map((cat) => (
+                                    <Fragment key={cat}>
+                                        <tr className="category-row">
+                                            <td colSpan="2">{cat}</td>
                                         </tr>
-                                    ))}
-                                </Fragment>
-                            ))}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td><strong>Total</strong></td>
-                                <td><strong>${totalAmount.toFixed(2)}</strong></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Amount Remaining</strong></td>
-                                <td><strong>${(parseFloat(budget) - totalAmount).toFixed(2)}</strong></td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                                        {entriesByCategory[cat].map((entry) => (
+                                            <tr key={entry.id} className={`entry-item ${selectedEntry === entry ? "selected" : ""}`} onClick={() => handleEntryClick(entry)}>
+                                                <td>
+                                                    <span className="entry-title">{entry.title}</span>
+                                                    <span className="entry-description">{entry.description}</span>
+                                                </td>
+                                                <td>${entry.amount}</td>
+                                            </tr>
+                                        ))}
+                                    </Fragment>
+                                ))}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td><strong>Total</strong></td>
+                                    <td><strong>${totalAmount.toFixed(2)}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Amount Remaining</strong></td>
+                                    <td><strong>${(parseFloat(budget) - totalAmount).toFixed(2)}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
+                ) : (
+                    <h3>No trip selected</h3>
+                )}
                 <BudgetFormModal
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}

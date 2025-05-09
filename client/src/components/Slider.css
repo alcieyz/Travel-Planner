@@ -44,8 +44,8 @@
 
 .swiper-button-next svg path,
 .swiper-button-prev svg path {
-    transform: scale(0.6); /* Resize the path to 80% of the original size */
-    transform-origin: center center; /* Ensure scaling is centered */
+    transform: scale(0.6); /* 80% of original size */
+    transform-origin: center center;
 }
 
 .swiper-button-next::after,
@@ -95,7 +95,6 @@
 }
 
 @media (max-width: 768px) {
-    /* Adjust for smaller screens */
     .swiper-button-next,
     .swiper-button-prev {
       width: 35px;

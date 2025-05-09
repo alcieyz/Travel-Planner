@@ -45,7 +45,7 @@ const Slider = () => {
             <Swiper
                 modules={[Navigation, Pagination, Autoplay]}
                 slidesPerView={3}
-                spaceBetween={20} // Space between slides
+                spaceBetween={20}
                 loop={true}
                 autoplay={{ delay: 2500, disableOnInteraction: false }}
                 pagination={{ clickable: true }}

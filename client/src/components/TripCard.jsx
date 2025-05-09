@@ -6,27 +6,12 @@ import './TripCard.css'
 const TripCard = ({ trip, onClick }) => {
   const {currentTrip, setCurrentTrip} = useAuth();
   const isSelected = currentTrip?.id === trip.id;
-  // Calculate days left (assuming trip.end is a date string)
-  const endDate = new Date(trip.end);
-  const today = new Date();
-  const daysLeft = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
-  
-  // Calculate budget progress (with fallbacks if budget data doesn't exist)
-  const spent = trip.budget?.spent || 0;
-  const total = trip.budget?.total || 1; // Avoid division by zero
-  const progress = Math.min(100, (spent / total) * 100);
-  
-  // Format date
-  const formattedDate = new Date(trip.start).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  });
+
+  // Calculate days until
 
   const handleSelectTrip = (e) => {
     e.stopPropagation();
     
-    // Skip confirmation if no trip selected or selecting the same trip
     if (!currentTrip || currentTrip.id === trip.id) {
       setCurrentTrip(trip);
       return;

@@ -15,7 +15,7 @@ const MyMap = () => {
         <div className="page-container">
             <div className='map-content'>
                 <div className="map-page-header">
-                    <p><a href="/Dashboard">Dashboard</a> {'>'} <a href="/MyTrips">{currentTrip.name}</a> {'>'} My Map</p>
+                    <p><a href="/Dashboard">Dashboard</a> {'>'} <a href="/MyTrips">{currentTrip ? `${currentTrip.name} ${'>'}`: ""}</a> {'>'} My Map</p>
                 </div>
                 {/* <div className="map-banner">
                     <img src={MapBanner} alt='Map Banner'/>
@@ -23,7 +23,12 @@ const MyMap = () => {
                 <div className="page-title">
                     <h1>My Map</h1>
                 </div>
-                <Map/>
+                {currentTrip ? (
+                    <Map/>
+                ) : (
+                    <h3>No trip selected</h3>
+                )}
+                
             </div>
         </div>
     )

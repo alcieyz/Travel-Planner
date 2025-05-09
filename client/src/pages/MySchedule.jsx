@@ -15,16 +15,21 @@ const MySchedule = () => {
         <div className="page-container">
             <div className='budget-content'>
                 <div className="page-header">
-                    <p><a href="/Dashboard">Dashboard</a> {'>'} <a href="/MyTrips">{currentTrip.name}</a> {'>'} My Schedule</p>
+                    <p><a href="/Dashboard">Dashboard</a> {'>'} <a href="/MyTrips">{currentTrip ? `${currentTrip.name} ${'>'}`: ""}</a> My Schedule</p>
                 </div>
                 <div className="page-title">
                     <h1>My Schedule</h1>
                 </div>
                 <div className="calendar-container">
-                    <Calendar
-                        username={username}
-                        tripId={currentTrip.id}
-                    />
+                    {currentTrip ? (
+                        <Calendar
+                            username={username}
+                            tripId={currentTrip.id}
+                        />
+
+                    ) : (
+                        <h3>No trip selected</h3>
+                    )}
                 </div>
             </div>
         </div>

@@ -152,11 +152,13 @@ const MyNotes = () => {
         <div className="page-container">
             <div className="notes-content">
                 <div className="page-header">
-                    <p><a href="/Dashboard">Dashboard</a> {'>'} <a href="/MyTrips">{currentTrip.name}</a> {'>'} My Notes</p>
+                    <p><a href="/Dashboard">Dashboard</a> {'>'} <a href="/MyTrips">{currentTrip ? `${currentTrip.name} ${'>'}`: ""}</a> {'>'} My Notes</p>
                 </div>
                 <div className="page-title">
                     <h1>My Notes</h1>
                 </div>
+                {currentTrip ? (
+                <div>
                 <div className="add-btn">
                     <button className='add-note-btn' onClick={openAddNoteModal}>
                         + Add Note
@@ -175,6 +177,10 @@ const MyNotes = () => {
                         </div>
                     </div>
                 ))}
+                </div>
+                ) : (
+                        <h3>No trip selected</h3>
+                )}
                 <NoteFormModal
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}

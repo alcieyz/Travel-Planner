@@ -8,8 +8,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-
-/*Navigation bar*/
 .react-calendar__navigation {
     display: flex;
 
@@ -24,18 +22,16 @@
     }
   }
 
-/* Calendar header */
 .fc-header-toolbar {
   margin-bottom: 1rem;
   /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
 }
 
 .fc-toolbar-title {
-  color: rgb(255, 255, 255);
+  color: black;
   font-weight: 600;
 }
 
-/* Button styles */
 .fc-button {
     background-color: rgb(255, 189, 234) !important;
     border: none !important;
@@ -57,7 +53,6 @@
   background-color: #d23669 !important;
 } */
 
-/* Calendar cells */
 /* .fc-daygrid-day {
   border: 1px solid #ffe5e9 !important;
 } */
@@ -79,40 +74,36 @@
 .fc-event .fc-event-title,
 .fc-event .fc-event-time,
 .fc-event .fc-event-title-container {
-    color: rgb(66, 66, 66) !important; /* Your text color */
+    color: rgb(66, 66, 66) !important;
 }
 
 .fc-event:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Day headers */
 .fc-col-header-cell {
-  background-color: #ffe0f3 !important; /* Very light pink */
+  background-color: #ffe0f3 !important;
   padding: 0.5rem 0;
   border: none !important;
 }
 
-/* Time grid */
 /* .fc-timegrid-slot {
   border-color: #ffebf4 !important;
 } */
 
 .fc-timegrid-axis {
-  background-color: #ffe0f3; /* Very light pink */
+  background-color: #ffe0f3;
   color: rgb(255, 47, 157);
 }
 
-/* Individual time slots */
 .fc-timegrid-slot-label {
   color: rgb(106, 106, 106) !important;
   font-size: 0.8em;
   padding: 2px 4px !important;
 }
  
-/* Weekend days */
 .fc-day-sat, .fc-day-sun {
-  background-color: #fff0f6; /* Slightly darker than normal days */
+  background-color: #fff0f6;
 }
 
 .fc-scroller::-webkit-scrollbar {
@@ -120,10 +111,10 @@
 }
 
 .fc-scroller::-webkit-scrollbar-track {
-  background: #ffe0f3; /* Very light pink */
+  background: #ffe0f3;
 }
 
 .fc-scroller::-webkit-scrollbar-thumb {
-  background-color: rgb(255, 137, 200); /* Light pink */
+  background-color: rgb(255, 137, 200);
   border-radius: 4px;
 }

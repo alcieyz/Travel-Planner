@@ -22,7 +22,6 @@ export default function Calendar({ username, tripId }) {
 
     const calendarRef = useRef(null);
 
-    // Fetch events from the server
     const fetchEvents = async () => {
         try {
             const response = await fetch(`http://localhost:5000/MySchedule?username=${username}&tripId=${tripId}`);
@@ -37,7 +36,7 @@ export default function Calendar({ username, tripId }) {
         fetchEvents();
     }, [username, tripId]);
 
-    // Handle date click (adding new event)
+    // Add new event
     const handleDateClick = (arg) => {
         const clickedDate = arg.date;
         const endDate = new Date(clickedDate);
@@ -63,9 +62,9 @@ export default function Calendar({ username, tripId }) {
         setIsModalOpen(true);
     };
 
-    // Handle event click (view/edit existing event)
+    // Edit event
     const handleEventClick = (info) => {
-        const startStr = info.event.startStr.slice(0, 16); // Remove timezone info
+        const startStr = info.event.startStr.slice(0, 16);
         const endStr = info.event.endStr ? info.event.endStr.slice(0, 16) : startStr;
 
         setSelectedEvent(info.event);
@@ -77,35 +76,6 @@ export default function Calendar({ username, tripId }) {
         setIsModalOpen(true);
     };
 
-    /* const handleEventDropOrResize = useCallback((info) => {
-        const { event } = info;
-        const updatedEvent = {
-            id: event.id,
-            title: event.title,
-            description: event.extendedProps.description || '',
-            start: toMySQLDateTime(event.start.toISOString()), // Convert to MySQL format
-            end: event.end ? toMySQLDateTime(event.end.toISOString()) : null, // Convert to MySQL format
-            color: event.backgroundColor,
-        };
-
-        updateEventInBackend(updatedEvent)
-            .then(() => {
-                setEvents(prevEvents =>
-                    prevEvents.map(evt =>
-                        evt.id === updatedEvent.id
-                            ? { ...updatedEvent, extendedProps: { description: updatedEvent.description } }
-                            : evt
-                    )
-                );
-                fullCalendarRef.current.getApi().refetchEvents();
-            })
-            .catch(error => {
-                console.error('Error updating event:', error);
-                info.revert();
-            });
-    }, []); */
-
-    // Save event (both create and update)
     const handleSaveEvent = async () => {
         const toLocalISO = (dateStr) => {
             const date = new Date(dateStr);
@@ -125,7 +95,6 @@ export default function Calendar({ username, tripId }) {
         try {
             let response;
             if (selectedEvent) {
-                // Update existing event
                 response = await fetch(`http://localhost:5000/MySchedule/${selectedEvent.id}`, {
                     method: 'PUT',
                     headers: {
@@ -134,7 +103,6 @@ export default function Calendar({ username, tripId }) {
                     body: JSON.stringify(eventData),
                 });
             } else {
-                // Create new event
                 response = await fetch('http://localhost:5000/MySchedule', {
                     method: 'POST',
                     headers: {
@@ -168,12 +136,10 @@ export default function Calendar({ username, tripId }) {
           }
         } catch (error) {
           console.error('Error updating event:', error);
-          // Revert the change visually
           changedEvent.revert();
         }
       }; */
 
-    // Delete event
     const handleDeleteEvent = async () => {
         if (!selectedEvent) return;
 
@@ -186,7 +152,7 @@ export default function Calendar({ username, tripId }) {
             await fetch(`http://localhost:5000/MySchedule/${selectedEvent.id}`, {
                 method: 'DELETE',
             });
-            fetchEvents(); // Refresh events
+            fetchEvents();
             setIsModalOpen(false);
         } catch (error) {
             console.error('Error deleting event:', error);
@@ -234,7 +200,6 @@ export default function Calendar({ username, tripId }) {
                 )} */
             />
 
-            {/* Event Modal */}
             <EventFormModal
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}

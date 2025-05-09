@@ -93,7 +93,6 @@ const Map = () => {
                 const data = await response.json();
 
                 if (!response.ok) {
-                    // This will catch both 400 and 500 errors
                     throw new Error(data.error || 'Failed to save marker');
                 }
 
