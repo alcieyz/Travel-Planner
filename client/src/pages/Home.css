@@ -1,5 +1,5 @@
 .home-page {
-    padding-top: 60px; 
+    padding-top: 55px; 
 }
 
 .hero-section {
@@ -100,24 +100,8 @@
     text-align: left;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .about-content {
-        flex-direction: column;
-    }
-
-    .about-image, .about-text {
-        flex: none;
-        width: 100%;
-    }
-
-    .about-image img {
-        margin-bottom: 1rem;
-    }
-}
-
 .offerings-section {
-    padding: 5rem 6rem;
+    padding: 5rem 0;
     background-color: rgb(255, 200, 229);
 }
 
